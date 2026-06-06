@@ -1,17 +1,61 @@
 {
+  "meta": {
+    "title": "\u4ea4\u4e92\u5f0f\u535a\u5ba2\u5e73\u53f0",
+    "description": "\u5305\u542b Supabase \u8ba4\u8bc1\u4e0e\u6570\u636e\u5e93\u57fa\u7840\u7684\u53cc\u8bed\u535a\u5ba2\u5e73\u53f0\u5e95\u5c42\u3002"
+  },
   "common": {
-    "phase": "\u7b2c\u4e00\u9636\u6bb5",
-    "projectName": "\u57fa\u7840\u642d\u5efa"
+    "phase": "\u7b2c\u4e8c\u9636\u6bb5",
+    "projectName": "\u8ba4\u8bc1\u57fa\u7840"
   },
   "locales": {
     "en": "\u82f1\u6587",
     "zh-CN": "\u7b80\u4f53\u4e2d\u6587"
+  },
+  "nav": {
+    "dashboard": "\u63a7\u5236\u53f0",
+    "profile": "\u4e2a\u4eba\u8d44\u6599",
+    "admin": "\u7ba1\u7406",
+    "logout": "\u9000\u51fa"
+  },
+  "roles": {
+    "admin": "\u7ba1\u7406\u5458",
+    "editor": "\u7f16\u8f91",
+    "author": "\u4f5c\u8005"
   },
   "theme": {
     "label": "\u4e3b\u9898",
     "system": "\u8ddf\u968f\u7cfb\u7edf",
     "light": "\u6d45\u8272",
     "dark": "\u6df1\u8272"
+  },
+  "auth": {
+    "loginTitle": "\u767b\u5f55",
+    "loginDescription": "\u4f7f\u7528\u4f60\u7684 Supabase \u8d26\u6237\u8fdb\u5165\u53d7\u4fdd\u62a4\u7684\u8def\u7531\u548c\u63a7\u5236\u53f0\u57fa\u7840\u9875\u9762\u3002",
+    "resetTitle": "\u91cd\u7f6e\u5bc6\u7801",
+    "resetDescription": "\u7533\u8bf7\u5bc6\u7801\u6062\u590d\u94fe\u63a5\uff0c\u5b89\u5168\u5730\u91cd\u65b0\u8bbe\u7f6e\u5bc6\u7801\u3002",
+    "updatePasswordTitle": "\u8bbe\u7f6e\u65b0\u5bc6\u7801",
+    "updatePasswordDescription": "\u6253\u5f00\u6062\u590d\u94fe\u63a5\u540e\uff0c\u4e3a\u4f60\u7684\u8d26\u6237\u8bbe\u7f6e\u65b0\u5bc6\u7801\u3002",
+    "emailLabel": "\u90ae\u7bb1",
+    "passwordLabel": "\u5bc6\u7801",
+    "confirmPasswordLabel": "\u786e\u8ba4\u5bc6\u7801",
+    "loginSubmit": "\u767b\u5f55",
+    "loginPending": "\u767b\u5f55\u4e2d...",
+    "resetSubmit": "\u53d1\u9001\u6062\u590d\u94fe\u63a5",
+    "resetPending": "\u53d1\u9001\u4e2d...",
+    "updatePasswordSubmit": "\u66f4\u65b0\u5bc6\u7801",
+    "updatePasswordPending": "\u66f4\u65b0\u4e2d...",
+    "resetLink": "\u5fd8\u8bb0\u5bc6\u7801\uff1f",
+    "backToLogin": "\u8fd4\u56de\u767b\u5f55",
+    "errors": {
+      "invalidCredentials": "\u90ae\u7bb1\u6216\u5bc6\u7801\u4e0d\u6b63\u786e\u3002",
+      "resetRequestFailed": "\u6062\u590d\u90ae\u4ef6\u53d1\u9001\u5931\u8d25\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5\u3002",
+      "passwordTooShort": "\u8bf7\u8bbe\u7f6e\u81f3\u5c118\u4f4d\u7684\u5bc6\u7801\u3002",
+      "passwordMismatch": "\u4e24\u6b21\u8f93\u5165\u7684\u5bc6\u7801\u4e0d\u4e00\u81f4\u3002",
+      "passwordUpdateFailed": "\u5bc6\u7801\u66f4\u65b0\u5931\u8d25\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5\u3002"
+    },
+    "feedback": {
+      "resetRequestSent": "\u5982\u679c\u8be5\u90ae\u7bb1\u5b58\u5728\uff0c\u7cfb\u7edf\u5df2\u53d1\u9001\u6062\u590d\u94fe\u63a5\u3002"
+    }
   },
   "home": {
     "eyebrow": "\u67b6\u6784\u5df2\u786e\u8ba4",
@@ -25,5 +69,35 @@
       "\u57fa\u4e8e\u8bbe\u8ba1\u4ee4\u724c\u548c CSS \u53d8\u91cf\u7684\u4e3b\u9898\u63d0\u4f9b\u5668\u67b6\u6784",
       "Supabase \u6d4f\u89c8\u5668\u7aef\u4e0e\u670d\u52a1\u7aef\u5de5\u5177\u4ee5\u53ca\u73af\u5883\u53d8\u91cf\u6a21\u677f"
     ]
+  },
+  "dashboard": {
+    "eyebrow": "\u53d7\u4fdd\u62a4\u8def\u7531",
+    "title": "\u8d26\u6237\u63a7\u5236\u53f0",
+    "description": "\u8fd9\u4e2a\u53d7\u4fdd\u62a4\u7684\u9875\u9762\u7528\u4e8e\u9a8c\u8bc1 Supabase \u4f1a\u8bdd\u6d41\u7a0b\u3001\u4e2a\u4eba\u8d44\u6599\u52a0\u8f7d\u3001\u8def\u7531\u5b88\u536b\u548c\u53ef\u590d\u7528\u7684\u6570\u636e\u5e93\u4ed3\u50a8\u5c42\u3002",
+    "roleLabel": "\u89d2\u8272",
+    "emailLabel": "\u90ae\u7bb1",
+    "localeLabel": "\u504f\u597d\u8bed\u8a00",
+    "postsPerPageLabel": "\u6bcf\u9875\u6587\u7ae0\u6570",
+    "activeThemeLabel": "\u5f53\u524d\u4e3b\u9898",
+    "categoryCountLabel": "\u79cd\u5b50\u5206\u7c7b\u6570",
+    "tagCountLabel": "\u79cd\u5b50\u6807\u7b7e\u6570"
+  },
+  "profile": {
+    "eyebrow": "\u4e2a\u4eba\u8d44\u6599\u52a0\u8f7d",
+    "title": "\u4e2a\u4eba\u8d44\u6599\u8be6\u60c5",
+    "description": "\u8fd9\u4e2a\u9875\u9762\u901a\u8fc7\u5171\u4eab\u7684\u670d\u52a1\u7aef\u6570\u636e\u5c42\u4ece Supabase \u52a0\u8f7d\u5f53\u524d\u767b\u5f55\u7528\u6237\u7684\u4e2a\u4eba\u8d44\u6599\u3002",
+    "displayNameLabel": "\u663e\u793a\u540d\u79f0",
+    "emailLabel": "\u90ae\u7bb1",
+    "roleLabel": "\u89d2\u8272",
+    "localeLabel": "\u504f\u597d\u8bed\u8a00"
+  },
+  "admin": {
+    "eyebrow": "\u4ec5\u9650\u7ba1\u7406\u5458\u8def\u7531",
+    "title": "\u7ba1\u7406\u6982\u89c8",
+    "description": "\u8fd9\u4e2a\u8def\u7531\u4ec5\u5bf9 admin \u89d2\u8272\u5f00\u653e\uff0c\u5e76\u4f1a\u901a\u8fc7\u6570\u636e\u5e93\u8bbf\u95ee\u5c42\u8bfb\u53d6\u9884\u7f6e\u7684\u5e73\u53f0\u8bbe\u7f6e\u3002",
+    "currentRoleLabel": "\u5f53\u524d\u89d2\u8272",
+    "siteNameLabel": "\u7ad9\u70b9\u540d\u79f0",
+    "defaultLocaleLabel": "\u9ed8\u8ba4\u8bed\u8a00",
+    "activeThemeLabel": "\u5f53\u524d\u4e3b\u9898"
   }
 }

@@ -1,17 +1,61 @@
 {
+  "meta": {
+    "title": "Blog For User Interactive",
+    "description": "Secure bilingual blog platform foundation with Supabase authentication and database setup."
+  },
   "common": {
-    "phase": "Phase 1",
-    "projectName": "Foundation"
+    "phase": "Phase 2",
+    "projectName": "Auth Foundation"
   },
   "locales": {
     "en": "English",
     "zh-CN": "Simplified Chinese"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "admin": "Admin",
+    "logout": "Logout"
+  },
+  "roles": {
+    "admin": "Admin",
+    "editor": "Editor",
+    "author": "Author"
   },
   "theme": {
     "label": "Theme",
     "system": "System",
     "light": "Light",
     "dark": "Dark"
+  },
+  "auth": {
+    "loginTitle": "Sign in",
+    "loginDescription": "Use your Supabase account to access protected routes and the dashboard foundation.",
+    "resetTitle": "Reset password",
+    "resetDescription": "Request a recovery link to securely reset your password.",
+    "updatePasswordTitle": "Choose a new password",
+    "updatePasswordDescription": "Set a new password for your account after opening the recovery link.",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "confirmPasswordLabel": "Confirm password",
+    "loginSubmit": "Sign in",
+    "loginPending": "Signing in...",
+    "resetSubmit": "Send recovery link",
+    "resetPending": "Sending...",
+    "updatePasswordSubmit": "Update password",
+    "updatePasswordPending": "Updating...",
+    "resetLink": "Forgot password?",
+    "backToLogin": "Back to login",
+    "errors": {
+      "invalidCredentials": "The email or password is incorrect.",
+      "resetRequestFailed": "The recovery email could not be sent. Please try again.",
+      "passwordTooShort": "Choose a password with at least 8 characters.",
+      "passwordMismatch": "The password confirmation does not match.",
+      "passwordUpdateFailed": "The password could not be updated. Please try again."
+    },
+    "feedback": {
+      "resetRequestSent": "If the email exists, a recovery link has been sent."
+    }
   },
   "home": {
     "eyebrow": "Architecture approved",
@@ -25,5 +69,35 @@
       "Theme provider architecture with token-based CSS variables",
       "Supabase browser and server helpers plus environment templates"
     ]
+  },
+  "dashboard": {
+    "eyebrow": "Authenticated route",
+    "title": "Account dashboard",
+    "description": "This protected page proves the Supabase session flow, profile loading, route guards, and reusable database repositories.",
+    "roleLabel": "Role",
+    "emailLabel": "Email",
+    "localeLabel": "Preferred locale",
+    "postsPerPageLabel": "Posts per page",
+    "activeThemeLabel": "Active theme",
+    "categoryCountLabel": "Seeded categories",
+    "tagCountLabel": "Seeded tags"
+  },
+  "profile": {
+    "eyebrow": "Profile loading",
+    "title": "Profile details",
+    "description": "This page loads the authenticated user profile from Supabase through the shared server-side data layer.",
+    "displayNameLabel": "Display name",
+    "emailLabel": "Email",
+    "roleLabel": "Role",
+    "localeLabel": "Preferred locale"
+  },
+  "admin": {
+    "eyebrow": "Admin-only route",
+    "title": "Administrative overview",
+    "description": "This route is restricted to the admin role and reads seeded platform settings through the database layer.",
+    "currentRoleLabel": "Current role",
+    "siteNameLabel": "Site name",
+    "defaultLocaleLabel": "Default locale",
+    "activeThemeLabel": "Active theme"
   }
 }

@@ -4,17 +4,34 @@ import { notFound } from 'next/navigation';
 import { SiteHeader } from '@/components/layout/site-header';
 import { getMessages } from '@/i18n/dictionaries';
 import { SUPPORTED_LOCALES, isSupportedLocale } from '@/i18n/config';
+import { translateMessage } from '@/i18n/messages';
 import { AppProviders } from '@/providers/app-providers';
 
 import '../globals.css';
 
-export const metadata: Metadata = {
-  title: 'Blog For User Interactive',
-  description: 'Phase 1 foundation for a bilingual interactive blog platform.',
-};
-
 export function generateStaticParams() {
   return SUPPORTED_LOCALES.map((locale) => ({ locale }));
+}
+
+type MetadataProps = {
+  params: Promise<{ locale: string }>;
+};
+
+export async function generateMetadata({
+  params,
+}: MetadataProps): Promise<Metadata> {
+  const { locale } = await params;
+
+  if (!isSupportedLocale(locale)) {
+    return {};
+  }
+
+  const messages = await getMessages(locale);
+
+  return {
+    title: translateMessage(messages, 'meta.title'),
+    description: translateMessage(messages, 'meta.description'),
+  };
 }
 
 type LocaleLayoutProps = {

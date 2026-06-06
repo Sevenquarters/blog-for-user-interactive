@@ -9,6 +9,7 @@ import {
   type Locale,
 } from '@/i18n/config';
 import type { Messages } from '@/i18n/dictionaries';
+import { getMessageValue } from '@/i18n/messages';
 
 type LocaleContextValue = {
   locale: Locale;
@@ -23,16 +24,6 @@ type LocaleProviderProps = {
   locale: Locale;
   messages: Messages;
 };
-
-function getMessageValue(messages: Record<string, unknown>, path: string) {
-  return path.split('.').reduce<unknown>((value, key) => {
-    if (typeof value !== 'object' || value === null) {
-      return undefined;
-    }
-
-    return (value as Record<string, unknown>)[key];
-  }, messages);
-}
 
 function replaceLocaleSegment(pathname: string, locale: Locale) {
   const segments = pathname.split('/').filter(Boolean);

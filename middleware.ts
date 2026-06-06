@@ -5,6 +5,7 @@ import {
   LOCALE_COOKIE_NAME,
   isSupportedLocale,
 } from '@/i18n/config';
+import { updateSupabaseSession } from '@/lib/supabase/middleware';
 
 function detectBrowserLocale(request: NextRequest) {
   const cookieLocale = request.cookies.get(LOCALE_COOKIE_NAME)?.value;
@@ -33,16 +34,19 @@ function hasLocalePrefix(pathname: string) {
   return isSupportedLocale(localeSegment);
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
-    pathname.includes('.') ||
-    hasLocalePrefix(pathname)
+    pathname.includes('.')
   ) {
     return NextResponse.next();
+  }
+
+  if (hasLocalePrefix(pathname)) {
+    return updateSupabaseSession(request);
   }
 
   const locale = detectBrowserLocale(request);
