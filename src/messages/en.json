@@ -1,0 +1,29 @@
+{
+  "common": {
+    "phase": "Phase 1",
+    "projectName": "Foundation"
+  },
+  "locales": {
+    "en": "English",
+    "zh-CN": "Simplified Chinese"
+  },
+  "theme": {
+    "label": "Theme",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "home": {
+    "eyebrow": "Architecture approved",
+    "title": "The bilingual platform foundation is ready for feature work.",
+    "description": "This phase sets up the app shell, locale handling, theme architecture, developer tooling, and Supabase integration points without implementing business workflows yet.",
+    "foundationTitle": "Included in this phase",
+    "foundationItems": [
+      "Next.js App Router with TypeScript and strict typing",
+      "Tailwind CSS, ESLint, and Prettier configured",
+      "Locale-aware routing with browser detection and persistence",
+      "Theme provider architecture with token-based CSS variables",
+      "Supabase browser and server helpers plus environment templates"
+    ]
+  }
+}
