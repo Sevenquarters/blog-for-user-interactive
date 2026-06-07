@@ -1,6 +1,6 @@
 # Blog For User Interactive
 
-Phase 2 establishes the database and authentication foundation for a bilingual blog platform built with Next.js, TypeScript, Tailwind CSS, Supabase, PostgreSQL, and Vercel.
+The project currently includes the Phase 2 foundation plus the Phase 3 public bilingual blog experience and the first admin content management foundation.
 
 ## What Is Included
 
@@ -13,10 +13,23 @@ Phase 2 establishes the database and authentication foundation for a bilingual b
 - Auth flows for login, logout, password reset, and profile loading
 - Route protection for public, authenticated, and admin-only routes
 - Reusable server-side database access modules
+- Public bilingual home page, blog listing, post detail pages, and category/tag archives
+- Published-only content queries with SEO metadata and responsive public layouts
+- Basic post view tracking integration
+- Protected post management with bilingual create, edit, delete, and draft or publish workflow
+- Translation completeness indicators and revision history viewing
+- Role-aware content permissions for `author`, `editor`, and `admin`
+- In-app demo post generation for Phase 3 verification
 
 ## What Is Not Included Yet
 
-This phase does not build public blog pages, post management, comments UI, media management UI, or the admin content workflows.
+The current implementation does not yet include:
+
+- comment submission or moderation UI
+- media manager UI
+- theme editor UI
+- advanced admin analytics dashboards
+- rich post editor or side-by-side translation tools
 
 ## Tech Decisions
 
@@ -158,6 +171,10 @@ The Next.js proxy redirects `/` to `/{locale}` based on the saved locale cookie 
 Public routes:
 
 - `/{locale}`
+- `/{locale}/blog`
+- `/{locale}/blog/{slug}`
+- `/{locale}/category/{slug}`
+- `/{locale}/tag/{slug}`
 - `/{locale}/login`
 - `/{locale}/reset-password`
 
@@ -166,6 +183,9 @@ Authenticated routes:
 - `/{locale}/dashboard`
 - `/{locale}/profile`
 - `/{locale}/update-password`
+- `/{locale}/posts`
+- `/{locale}/posts/new`
+- `/{locale}/posts/{id}`
 
 Admin-only routes:
 
@@ -211,10 +231,29 @@ supabase/
 - `npm run format` formats the project with Prettier
 - `npm run format:check` checks formatting without changing files
 
-## Phase 2 Notes
+## Demo Content
+
+To create sample published bilingual posts for verification:
+
+1. Sign in with an authenticated account.
+2. Open `/{locale}/posts`.
+3. Use the `Generate demo posts` action.
+
+The demo generator creates published English and Simplified Chinese posts for the current signed-in author and skips duplicates when the expected sample posts already exist.
+
+Content permissions follow the role model:
+
+- `author` can manage only their own posts
+- `editor` can manage posts across the workspace
+- `admin` can manage posts across the workspace and access admin-only routes
+
+## Current Notes
 
 - The locale cookie key is `blog-locale`
 - The default locale is `zh-CN`
-- The protected route shell demonstrates session-aware route guarding without building blog features yet
+- The root route redirects to a locale route through Next.js proxy middleware
 - The admin route is restricted to the `admin` role
 - Seed data creates a default active theme and starter taxonomy records
+- Public blog pages only read published content
+- Post management records revision snapshots on each save
+- Published posts require complete English and Simplified Chinese content

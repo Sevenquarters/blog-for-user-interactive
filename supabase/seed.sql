@@ -75,8 +75,8 @@ values
     '21111111-1111-1111-1111-111111111112',
     1,
     'zh-CN',
-    '用户交互式博客平台',
-    '一个基于 Supabase 和 Next.js 的双语互动博客平台。'
+    '交互式博客平台',
+    '一个基于 Supabase 与 Next.js 构建的双语互动博客平台。'
   )
 on conflict (site_settings_id, locale) do update
 set

@@ -1,106 +1,200 @@
 {
   "meta": {
-    "title": "\u4ea4\u4e92\u5f0f\u535a\u5ba2\u5e73\u53f0",
-    "description": "\u5305\u542b Supabase \u8ba4\u8bc1\u4e0e\u6570\u636e\u5e93\u57fa\u7840\u7684\u53cc\u8bed\u535a\u5ba2\u5e73\u53f0\u5e95\u5c42\u3002"
+    "title": "交互式博客平台",
+    "description": "一个基于 Next.js 与 Supabase 构建的中英双语博客。"
   },
   "common": {
-    "phase": "\u7b2c\u4e8c\u9636\u6bb5",
-    "projectName": "\u8ba4\u8bc1\u57fa\u7840"
+    "phase": "公开博客",
+    "projectName": "双语内容平台"
   },
   "locales": {
-    "en": "\u82f1\u6587",
-    "zh-CN": "\u7b80\u4f53\u4e2d\u6587"
+    "en": "英文",
+    "zh-CN": "简体中文"
   },
   "nav": {
-    "dashboard": "\u63a7\u5236\u53f0",
-    "profile": "\u4e2a\u4eba\u8d44\u6599",
-    "admin": "\u7ba1\u7406",
-    "logout": "\u9000\u51fa"
+    "home": "首页",
+    "blog": "博客",
+    "dashboard": "控制台",
+    "posts": "文章管理",
+    "profile": "个人资料",
+    "admin": "管理",
+    "login": "登录",
+    "logout": "退出"
   },
   "roles": {
-    "admin": "\u7ba1\u7406\u5458",
-    "editor": "\u7f16\u8f91",
-    "author": "\u4f5c\u8005"
+    "admin": "管理员",
+    "editor": "编辑",
+    "author": "作者"
   },
   "theme": {
-    "label": "\u4e3b\u9898",
-    "system": "\u8ddf\u968f\u7cfb\u7edf",
-    "light": "\u6d45\u8272",
-    "dark": "\u6df1\u8272"
+    "label": "主题",
+    "system": "跟随系统",
+    "light": "浅色",
+    "dark": "深色"
   },
   "auth": {
-    "loginTitle": "\u767b\u5f55",
-    "loginDescription": "\u4f7f\u7528\u4f60\u7684 Supabase \u8d26\u6237\u8fdb\u5165\u53d7\u4fdd\u62a4\u7684\u8def\u7531\u548c\u63a7\u5236\u53f0\u57fa\u7840\u9875\u9762\u3002",
-    "resetTitle": "\u91cd\u7f6e\u5bc6\u7801",
-    "resetDescription": "\u7533\u8bf7\u5bc6\u7801\u6062\u590d\u94fe\u63a5\uff0c\u5b89\u5168\u5730\u91cd\u65b0\u8bbe\u7f6e\u5bc6\u7801\u3002",
-    "updatePasswordTitle": "\u8bbe\u7f6e\u65b0\u5bc6\u7801",
-    "updatePasswordDescription": "\u6253\u5f00\u6062\u590d\u94fe\u63a5\u540e\uff0c\u4e3a\u4f60\u7684\u8d26\u6237\u8bbe\u7f6e\u65b0\u5bc6\u7801\u3002",
-    "emailLabel": "\u90ae\u7bb1",
-    "passwordLabel": "\u5bc6\u7801",
-    "confirmPasswordLabel": "\u786e\u8ba4\u5bc6\u7801",
-    "loginSubmit": "\u767b\u5f55",
-    "loginPending": "\u767b\u5f55\u4e2d...",
-    "resetSubmit": "\u53d1\u9001\u6062\u590d\u94fe\u63a5",
-    "resetPending": "\u53d1\u9001\u4e2d...",
-    "updatePasswordSubmit": "\u66f4\u65b0\u5bc6\u7801",
-    "updatePasswordPending": "\u66f4\u65b0\u4e2d...",
-    "setupMissingTitle": "Supabase \u73af\u5883\u53d8\u91cf\u672a\u914d\u7f6e",
-    "setupMissingDescription": "\u8bf7\u5148\u521b\u5efa .env.local\uff0c\u586b\u5199\u4e0b\u5217\u53d8\u91cf\uff0c\u7136\u540e\u91cd\u542f\u5f00\u53d1\u670d\u52a1\u518d\u8fdb\u884c\u767b\u5f55\u3002",
-    "resetLink": "\u5fd8\u8bb0\u5bc6\u7801\uff1f",
-    "backToLogin": "\u8fd4\u56de\u767b\u5f55",
+    "loginTitle": "登录",
+    "loginDescription": "使用你的 Supabase 账号进入受保护的路由和控制台基础页面。",
+    "resetTitle": "重置密码",
+    "resetDescription": "申请密码恢复链接，安全地重新设置密码。",
+    "updatePasswordTitle": "设置新密码",
+    "updatePasswordDescription": "打开恢复链接后，为你的账号设置新密码。",
+    "emailLabel": "邮箱",
+    "passwordLabel": "密码",
+    "confirmPasswordLabel": "确认密码",
+    "loginSubmit": "登录",
+    "loginPending": "登录中...",
+    "resetSubmit": "发送恢复链接",
+    "resetPending": "发送中...",
+    "updatePasswordSubmit": "更新密码",
+    "updatePasswordPending": "更新中...",
+    "setupMissingTitle": "Supabase 环境变量未配置",
+    "setupMissingDescription": "请先创建 .env.local，填写下列变量，然后重启开发服务再进行登录。",
+    "resetLink": "忘记密码？",
+    "backToLogin": "返回登录",
     "errors": {
-      "missingSupabaseEnv": "Supabase \u73af\u5883\u53d8\u91cf\u7f3a\u5931\uff0c\u8bf7\u5148\u5b8c\u6210\u672c\u5730\u914d\u7f6e\u5e76\u91cd\u542f\u5e94\u7528\u3002",
-      "invalidCredentials": "\u90ae\u7bb1\u6216\u5bc6\u7801\u4e0d\u6b63\u786e\u3002",
-      "resetRequestFailed": "\u6062\u590d\u90ae\u4ef6\u53d1\u9001\u5931\u8d25\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5\u3002",
-      "passwordTooShort": "\u8bf7\u8bbe\u7f6e\u81f3\u5c118\u4f4d\u7684\u5bc6\u7801\u3002",
-      "passwordMismatch": "\u4e24\u6b21\u8f93\u5165\u7684\u5bc6\u7801\u4e0d\u4e00\u81f4\u3002",
-      "passwordUpdateFailed": "\u5bc6\u7801\u66f4\u65b0\u5931\u8d25\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5\u3002"
+      "missingSupabaseEnv": "Supabase 环境变量缺失，请先完成本地配置并重启应用。",
+      "invalidCredentials": "邮箱或密码不正确。",
+      "resetRequestFailed": "恢复邮件发送失败，请稍后重试。",
+      "passwordTooShort": "请设置至少 8 位的密码。",
+      "passwordMismatch": "两次输入的密码不一致。",
+      "passwordUpdateFailed": "密码更新失败，请稍后重试。"
     },
     "feedback": {
-      "resetRequestSent": "\u5982\u679c\u8be5\u90ae\u7bb1\u5b58\u5728\uff0c\u7cfb\u7edf\u5df2\u53d1\u9001\u6062\u590d\u94fe\u63a5\u3002"
+      "resetRequestSent": "如果该邮箱存在，系统已发送恢复链接。"
     }
   },
   "home": {
-    "eyebrow": "\u67b6\u6784\u5df2\u786e\u8ba4",
-    "title": "\u53cc\u8bed\u5e73\u53f0\u7684\u57fa\u7840\u5c42\u5df2\u7ecf\u51c6\u5907\u597d\u8fdb\u5165\u529f\u80fd\u5f00\u53d1\u3002",
-    "description": "\u8fd9\u4e00\u9636\u6bb5\u5b8c\u6210\u4e86\u5e94\u7528\u58f3\u5c42\u3001\u8bed\u8a00\u5904\u7406\u3001\u4e3b\u9898\u67b6\u6784\u3001\u5f00\u53d1\u5de5\u5177\u94fe\u548c Supabase \u63a5\u5165\u70b9\uff0c\u4f46\u8fd8\u6ca1\u6709\u5b9e\u73b0\u5177\u4f53\u4e1a\u52a1\u6d41\u7a0b\u3002",
-    "foundationTitle": "\u672c\u9636\u6bb5\u5df2\u5b8c\u6210",
-    "foundationItems": [
-      "\u57fa\u4e8e Next.js App Router \u7684 TypeScript \u4e25\u683c\u7c7b\u578b\u9879\u76ee",
-      "\u5b8c\u6210 Tailwind CSS\u3001ESLint \u548c Prettier \u914d\u7f6e",
-      "\u652f\u6301\u6d4f\u89c8\u5668\u8bed\u8a00\u68c0\u6d4b\u4e0e\u6301\u4e45\u5316\u7684\u591a\u8bed\u8a00\u8def\u7531\u57fa\u7840",
-      "\u57fa\u4e8e\u8bbe\u8ba1\u4ee4\u724c\u548c CSS \u53d8\u91cf\u7684\u4e3b\u9898\u63d0\u4f9b\u5668\u67b6\u6784",
-      "Supabase \u6d4f\u89c8\u5668\u7aef\u4e0e\u670d\u52a1\u7aef\u5de5\u5177\u4ee5\u53ca\u73af\u5883\u53d8\u91cf\u6a21\u677f"
-    ]
+    "eyebrow": "已发布内容",
+    "description": "一个同时服务于中文与英文读者的内容空间，用来记录产品思考、工程实践与设计系统决策。",
+    "primaryCta": "浏览博客",
+    "secondaryCta": "进入控制台",
+    "statPublishedPosts": "已发布文章",
+    "statCategories": "分类数量",
+    "featuredTitle": "精选阅读",
+    "latestTitle": "最新发布",
+    "viewAll": "查看全部文章",
+    "categoriesTitle": "按分类浏览"
+  },
+  "blog": {
+    "eyebrow": "内容归档",
+    "indexTitle": "双语博客归档",
+    "indexDescription": "浏览已经发布的中英双语文章，并通过分类与标签快速切换你关心的主题。",
+    "featuredTitle": "精选文章",
+    "latestTitle": "最新内容",
+    "categoriesTitle": "分类",
+    "tagsTitle": "热门标签",
+    "statPosts": "已发布文章",
+    "statCategories": "分类",
+    "categoryLabel": "分类",
+    "featuredBadge": "精选",
+    "readArticle": "阅读全文",
+    "readingTime": "预计 {minutes} 分钟",
+    "emptyState": "暂时还没有已发布文章。你可以先在 Supabase 中插入发布状态的内容，再回来查看前台效果。",
+    "backToBlog": "返回博客",
+    "browseFiltersTitle": "继续浏览",
+    "activeFiltersLabel": "你可以在不离开当前页面的情况下切换分类和标签。",
+    "clearCategoryFilter": "清除分类",
+    "clearTagFilter": "清除标签",
+    "relatedTitle": "相关文章",
+    "categoryArchiveEyebrow": "分类归档",
+    "tagArchiveEyebrow": "标签归档"
+  },
+  "content": {
+    "eyebrow": "内容工作台",
+    "title": "文章管理",
+    "descriptionElevated": "你可以管理整个工作区中的草稿与已发布内容，并在发布前查看修订历史。",
+    "descriptionAuthor": "你可以在这里创建并维护自己的文章草稿，内容准备好后就可以发布。",
+    "generateDemo": "生成示例文章",
+    "newPost": "新建文章",
+    "emptyState": "当前还没有可管理的文章。你可以先生成示例文章，或者创建第一篇草稿。",
+    "editPost": "编辑文章",
+    "translationComplete": "已完成",
+    "translationMissing": "进行中",
+    "updatedLabel": "最近更新",
+    "publishedLabel": "发布时间",
+    "untitled": "未命名文章",
+    "createEyebrow": "创建内容",
+    "createTitle": "新建文章",
+    "backToPosts": "返回文章列表",
+    "editEyebrow": "编辑内容",
+    "revisionsTitle": "修订历史",
+    "revisionLabel": "修订",
+    "noRevisionSummary": "这一条修订没有填写说明。",
+    "noRevisions": "暂时还没有修订记录。",
+    "savePost": "保存文章",
+    "createPost": "创建文章",
+    "deletePost": "删除文章",
+    "status": {
+      "draft": "草稿",
+      "scheduled": "定时发布",
+      "published": "已发布",
+      "archived": "已归档"
+    },
+    "fields": {
+      "status": "状态",
+      "publishTime": "发布时间",
+      "readingTime": "阅读时长",
+      "category": "分类",
+      "none": "无",
+      "featured": "设为精选文章",
+      "changeSummary": "变更说明",
+      "changeSummaryPlaceholder": "简单说明这次修订做了什么修改",
+      "tags": "标签",
+      "title": "标题",
+      "slug": "Slug",
+      "excerpt": "摘要",
+      "content": "正文",
+      "seoTitle": "SEO 标题",
+      "seoDescription": "SEO 描述",
+      "coverAlt": "封面替代文本"
+    },
+    "feedback": {
+      "created": "文章创建成功。",
+      "saved": "文章保存成功。",
+      "deleted": "文章已删除。",
+      "demoCreated": "已经为你的账号生成示例文章。",
+      "demoExists": "你的账号下已经存在示例文章。"
+    },
+    "errors": {
+      "invalidStatus": "所选文章状态无效。",
+      "missingTitles": "保存前请先填写标题。",
+      "incompletePublishedTranslations": "发布文章时，需要完整填写标题、slug 和正文。",
+      "missingPublishDate": "定时发布的文章必须填写发布时间。",
+      "saveFailed": "文章保存失败，请稍后重试。",
+      "deleteFailed": "文章删除失败，请稍后重试。",
+      "demoFailed": "示例内容生成失败，请稍后重试。",
+      "postNotFound": "请求的文章不存在，或你没有权限访问。"
+    }
   },
   "dashboard": {
-    "eyebrow": "\u53d7\u4fdd\u62a4\u8def\u7531",
-    "title": "\u8d26\u6237\u63a7\u5236\u53f0",
-    "description": "\u8fd9\u4e2a\u53d7\u4fdd\u62a4\u7684\u9875\u9762\u7528\u4e8e\u9a8c\u8bc1 Supabase \u4f1a\u8bdd\u6d41\u7a0b\u3001\u4e2a\u4eba\u8d44\u6599\u52a0\u8f7d\u3001\u8def\u7531\u5b88\u536b\u548c\u53ef\u590d\u7528\u7684\u6570\u636e\u5e93\u4ed3\u50a8\u5c42\u3002",
-    "roleLabel": "\u89d2\u8272",
-    "emailLabel": "\u90ae\u7bb1",
-    "localeLabel": "\u504f\u597d\u8bed\u8a00",
-    "postsPerPageLabel": "\u6bcf\u9875\u6587\u7ae0\u6570",
-    "activeThemeLabel": "\u5f53\u524d\u4e3b\u9898",
-    "categoryCountLabel": "\u79cd\u5b50\u5206\u7c7b\u6570",
-    "tagCountLabel": "\u79cd\u5b50\u6807\u7b7e\u6570"
+    "eyebrow": "受保护路由",
+    "title": "账户控制台",
+    "description": "这个受保护的页面用于验证 Supabase 会话流程、个人资料加载、路由守卫和可复用的数据库仓储层。",
+    "roleLabel": "角色",
+    "emailLabel": "邮箱",
+    "localeLabel": "偏好语言",
+    "postsPerPageLabel": "每页文章数",
+    "activeThemeLabel": "当前主题",
+    "categoryCountLabel": "种子分类数",
+    "tagCountLabel": "种子标签数"
   },
   "profile": {
-    "eyebrow": "\u4e2a\u4eba\u8d44\u6599\u52a0\u8f7d",
-    "title": "\u4e2a\u4eba\u8d44\u6599\u8be6\u60c5",
-    "description": "\u8fd9\u4e2a\u9875\u9762\u901a\u8fc7\u5171\u4eab\u7684\u670d\u52a1\u7aef\u6570\u636e\u5c42\u4ece Supabase \u52a0\u8f7d\u5f53\u524d\u767b\u5f55\u7528\u6237\u7684\u4e2a\u4eba\u8d44\u6599\u3002",
-    "displayNameLabel": "\u663e\u793a\u540d\u79f0",
-    "emailLabel": "\u90ae\u7bb1",
-    "roleLabel": "\u89d2\u8272",
-    "localeLabel": "\u504f\u597d\u8bed\u8a00"
+    "eyebrow": "个人资料加载",
+    "title": "个人资料详情",
+    "description": "这个页面通过共享的服务端数据层从 Supabase 加载当前登录用户的个人资料。",
+    "displayNameLabel": "显示名称",
+    "emailLabel": "邮箱",
+    "roleLabel": "角色",
+    "localeLabel": "偏好语言"
   },
   "admin": {
-    "eyebrow": "\u4ec5\u9650\u7ba1\u7406\u5458\u8def\u7531",
-    "title": "\u7ba1\u7406\u6982\u89c8",
-    "description": "\u8fd9\u4e2a\u8def\u7531\u4ec5\u5bf9 admin \u89d2\u8272\u5f00\u653e\uff0c\u5e76\u4f1a\u901a\u8fc7\u6570\u636e\u5e93\u8bbf\u95ee\u5c42\u8bfb\u53d6\u9884\u7f6e\u7684\u5e73\u53f0\u8bbe\u7f6e\u3002",
-    "currentRoleLabel": "\u5f53\u524d\u89d2\u8272",
-    "siteNameLabel": "\u7ad9\u70b9\u540d\u79f0",
-    "defaultLocaleLabel": "\u9ed8\u8ba4\u8bed\u8a00",
-    "activeThemeLabel": "\u5f53\u524d\u4e3b\u9898"
+    "eyebrow": "仅限管理员路由",
+    "title": "管理概览",
+    "description": "这个路由仅对 admin 角色开放，并会通过数据库访问层读取预置的平台设置。",
+    "currentRoleLabel": "当前角色",
+    "siteNameLabel": "站点名称",
+    "defaultLocaleLabel": "默认语言",
+    "activeThemeLabel": "当前主题"
   }
 }

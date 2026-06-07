@@ -1,20 +1,24 @@
 {
   "meta": {
     "title": "Blog For User Interactive",
-    "description": "Secure bilingual blog platform foundation with Supabase authentication and database setup."
+    "description": "A bilingual editorial blog built with Next.js and Supabase."
   },
   "common": {
-    "phase": "Phase 2",
-    "projectName": "Auth Foundation"
+    "phase": "Public Journal",
+    "projectName": "Bilingual Editorial"
   },
   "locales": {
     "en": "English",
     "zh-CN": "Simplified Chinese"
   },
   "nav": {
+    "home": "Home",
+    "blog": "Blog",
     "dashboard": "Dashboard",
+    "posts": "Posts",
     "profile": "Profile",
     "admin": "Admin",
+    "login": "Sign in",
     "logout": "Logout"
   },
   "roles": {
@@ -61,17 +65,107 @@
     }
   },
   "home": {
-    "eyebrow": "Architecture approved",
-    "title": "The bilingual platform foundation is ready for feature work.",
-    "description": "This phase sets up the app shell, locale handling, theme architecture, developer tooling, and Supabase integration points without implementing business workflows yet.",
-    "foundationTitle": "Included in this phase",
-    "foundationItems": [
-      "Next.js App Router with TypeScript and strict typing",
-      "Tailwind CSS, ESLint, and Prettier configured",
-      "Locale-aware routing with browser detection and persistence",
-      "Theme provider architecture with token-based CSS variables",
-      "Supabase browser and server helpers plus environment templates"
-    ]
+    "eyebrow": "Published stories",
+    "description": "A bilingual editorial space for product ideas, engineering notes, and design decisions.",
+    "primaryCta": "Browse the blog",
+    "secondaryCta": "Open dashboard",
+    "statPublishedPosts": "Published posts",
+    "statCategories": "Categories",
+    "featuredTitle": "Featured reads",
+    "latestTitle": "Latest entries",
+    "viewAll": "View all posts",
+    "categoriesTitle": "Explore by category"
+  },
+  "blog": {
+    "eyebrow": "Editorial archive",
+    "indexTitle": "Bilingual blog archive",
+    "indexDescription": "Explore published articles across English and Simplified Chinese, with category and tag navigation built into the reading experience.",
+    "featuredTitle": "Featured stories",
+    "latestTitle": "Recent publishing",
+    "categoriesTitle": "Categories",
+    "tagsTitle": "Popular tags",
+    "statPosts": "Published posts",
+    "statCategories": "Categories",
+    "categoryLabel": "Category",
+    "featuredBadge": "Featured",
+    "readArticle": "Read article",
+    "readingTime": "{minutes} min read",
+    "emptyState": "No published posts are available yet. Create published content in Supabase to populate the public blog.",
+    "backToBlog": "Back to blog",
+    "browseFiltersTitle": "Browse archive",
+    "activeFiltersLabel": "Switch categories or tags without leaving this view.",
+    "clearCategoryFilter": "clear category",
+    "clearTagFilter": "clear tag",
+    "relatedTitle": "Related reading",
+    "categoryArchiveEyebrow": "Category archive",
+    "tagArchiveEyebrow": "Tag archive"
+  },
+  "content": {
+    "eyebrow": "Content workspace",
+    "title": "Post management",
+    "descriptionElevated": "You can manage draft and published content across the workspace and inspect revision history before shipping updates.",
+    "descriptionAuthor": "You can create and maintain your own drafts here, then publish them once the post content is ready.",
+    "generateDemo": "Generate demo posts",
+    "newPost": "New post",
+    "emptyState": "No manageable posts are available yet. Generate demo posts or create your first draft to begin.",
+    "editPost": "Edit post",
+    "translationComplete": "Complete",
+    "translationMissing": "In progress",
+    "updatedLabel": "Updated",
+    "publishedLabel": "Published",
+    "untitled": "Untitled post",
+    "createEyebrow": "Create content",
+    "createTitle": "New post",
+    "backToPosts": "Back to posts",
+    "editEyebrow": "Edit content",
+    "revisionsTitle": "Revision history",
+    "revisionLabel": "Revision",
+    "noRevisionSummary": "No summary was recorded for this revision.",
+    "noRevisions": "No revisions have been recorded yet.",
+    "savePost": "Save post",
+    "createPost": "Create post",
+    "deletePost": "Delete post",
+    "status": {
+      "draft": "Draft",
+      "scheduled": "Scheduled",
+      "published": "Published",
+      "archived": "Archived"
+    },
+    "fields": {
+      "status": "Status",
+      "publishTime": "Publish time",
+      "readingTime": "Reading time",
+      "category": "Category",
+      "none": "None",
+      "featured": "Featured post",
+      "changeSummary": "Change summary",
+      "changeSummaryPlaceholder": "Describe what changed in this revision",
+      "tags": "Tags",
+      "title": "Title",
+      "slug": "Slug",
+      "excerpt": "Excerpt",
+      "content": "Content",
+      "seoTitle": "SEO title",
+      "seoDescription": "SEO description",
+      "coverAlt": "Cover alt"
+    },
+    "feedback": {
+      "created": "The post was created successfully.",
+      "saved": "The post was saved successfully.",
+      "deleted": "The post was deleted successfully.",
+      "demoCreated": "Sample posts were generated for your account.",
+      "demoExists": "Sample posts already exist for your account."
+    },
+    "errors": {
+      "invalidStatus": "The selected post status is invalid.",
+      "missingTitles": "Add a title before saving.",
+      "incompletePublishedTranslations": "Published posts need a title, slug, and content.",
+      "missingPublishDate": "Scheduled posts need a publish date.",
+      "saveFailed": "The post could not be saved. Please try again.",
+      "deleteFailed": "The post could not be deleted. Please try again.",
+      "demoFailed": "Sample content could not be generated. Please try again.",
+      "postNotFound": "The requested post could not be found or is not accessible."
+    }
   },
   "dashboard": {
     "eyebrow": "Authenticated route",

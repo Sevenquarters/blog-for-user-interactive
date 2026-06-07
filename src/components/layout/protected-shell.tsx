@@ -25,6 +25,10 @@ export async function ProtectedShell({
       label: translateMessage(messages, 'nav.dashboard'),
     },
     {
+      href: buildLocalePath(locale, '/posts'),
+      label: translateMessage(messages, 'nav.posts'),
+    },
+    {
       href: buildLocalePath(locale, '/profile'),
       label: translateMessage(messages, 'nav.profile'),
     },

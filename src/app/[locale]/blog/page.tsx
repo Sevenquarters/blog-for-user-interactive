@@ -1,8 +1,9 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { PostCard } from '@/components/public/post-card';
-import { isSupportedLocale } from '@/i18n/config';
+import { isSupportedLocale, type Locale } from '@/i18n/config';
 import { getMessages } from '@/i18n/dictionaries';
 import { translateMessage } from '@/i18n/messages';
 import { buildLocalePath } from '@/lib/auth/paths';
@@ -10,74 +11,98 @@ import {
   getPublicSiteSettings,
   listPublicCategories,
   listPublishedPosts,
+  listPublicTags,
 } from '@/lib/db/public-blog';
-
-type HomePageProps = {
-  params: Promise<{ locale: string }>;
-};
 
 export const revalidate = 300;
 export const dynamic = 'force-dynamic';
 
-export default async function HomePage({ params }: HomePageProps) {
+type BlogPageProps = {
+  params: Promise<{ locale: string }>;
+};
+
+async function loadBlogPageData(locale: Locale) {
+  const [messages, siteSettings, categories, tags, posts] = await Promise.all([
+    getMessages(locale),
+    getPublicSiteSettings(locale),
+    listPublicCategories(locale),
+    listPublicTags(locale),
+    listPublishedPosts(locale),
+  ]);
+
+  return {
+    messages,
+    siteSettings,
+    categories,
+    tags,
+    posts,
+  };
+}
+
+export async function generateMetadata({
+  params,
+}: BlogPageProps): Promise<Metadata> {
+  const { locale } = await params;
+
+  if (!isSupportedLocale(locale)) {
+    return {};
+  }
+
+  const [{ siteName, siteDescription }, messages] = await Promise.all([
+    getPublicSiteSettings(locale),
+    getMessages(locale),
+  ]);
+
+  return {
+    title: `${translateMessage(messages, 'blog.indexTitle')} | ${siteName}`,
+    description:
+      translateMessage(messages, 'blog.indexDescription') || siteDescription || undefined,
+    alternates: {
+      canonical: buildLocalePath(locale, '/blog'),
+    },
+  };
+}
+
+export default async function BlogPage({ params }: BlogPageProps) {
   const { locale } = await params;
 
   if (!isSupportedLocale(locale)) {
     notFound();
   }
 
-  const [messages, siteSettings, categories, posts] = await Promise.all([
-    getMessages(locale),
-    getPublicSiteSettings(locale),
-    listPublicCategories(locale),
-    listPublishedPosts(locale),
-  ]);
+  const { messages, siteSettings, categories, tags, posts } =
+    await loadBlogPageData(locale);
   const featuredPosts = posts.filter((post) => post.isFeatured).slice(0, 2);
   const recentPosts = posts.slice(0, siteSettings.postsPerPage);
 
   return (
     <div className="flex w-full flex-col gap-8">
-      <section className="overflow-hidden rounded-[2.75rem] border border-[var(--theme-border)] bg-[linear-gradient(120deg,_rgba(255,247,237,0.98),_rgba(255,255,255,0.95)_52%,_rgba(254,240,138,0.36)_100%)] p-8 shadow-[0_32px_90px_rgba(15,23,42,0.12)] sm:p-10">
-        <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+      <section className="overflow-hidden rounded-[2.5rem] border border-[var(--theme-border)] bg-[linear-gradient(135deg,_rgba(255,247,237,0.96),_rgba(255,255,255,0.92)_48%,_rgba(254,240,138,0.3)_100%)] p-8 shadow-[0_32px_90px_rgba(15,23,42,0.1)] sm:p-10">
+        <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
           <div>
             <p className="text-sm font-semibold tracking-[0.24em] text-[var(--theme-accent)] uppercase">
-              {translateMessage(messages, 'home.eyebrow')}
+              {translateMessage(messages, 'blog.eyebrow')}
             </p>
-            <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-tight text-[var(--theme-foreground)] sm:text-6xl">
-              {siteSettings.siteName}
+            <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-tight text-[var(--theme-foreground)] sm:text-5xl">
+              {translateMessage(messages, 'blog.indexTitle')}
             </h1>
             <p className="mt-4 max-w-3xl text-lg leading-8 text-[var(--theme-muted)]">
-              {siteSettings.siteDescription ??
-                translateMessage(messages, 'home.description')}
+              {translateMessage(messages, 'blog.indexDescription')}
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href={buildLocalePath(locale, '/blog')}
-                className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--theme-accent)] px-6 py-3 text-sm font-semibold text-white shadow-[0_16px_38px_rgba(194,65,12,0.32)] transition hover:-translate-y-0.5"
-              >
-                {translateMessage(messages, 'home.primaryCta')}
-              </Link>
-              <Link
-                href={buildLocalePath(locale, '/dashboard')}
-                className="inline-flex min-h-12 items-center justify-center rounded-full border border-[var(--theme-border)] bg-white/70 px-6 py-3 text-sm font-semibold text-[var(--theme-foreground)] transition hover:-translate-y-0.5"
-              >
-                {translateMessage(messages, 'home.secondaryCta')}
-              </Link>
-            </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-[1.75rem] border border-[var(--theme-border)] bg-white/72 p-5">
+            <div className="rounded-[1.75rem] border border-[var(--theme-border)] bg-white/70 p-5">
               <p className="text-sm text-[var(--theme-muted)]">
-                {translateMessage(messages, 'home.statPublishedPosts')}
+                {translateMessage(messages, 'blog.statPosts')}
               </p>
               <p className="mt-3 text-3xl font-semibold text-[var(--theme-foreground)]">
                 {posts.length}
               </p>
             </div>
-            <div className="rounded-[1.75rem] border border-[var(--theme-border)] bg-white/72 p-5">
+            <div className="rounded-[1.75rem] border border-[var(--theme-border)] bg-white/70 p-5">
               <p className="text-sm text-[var(--theme-muted)]">
-                {translateMessage(messages, 'home.statCategories')}
+                {translateMessage(messages, 'blog.statCategories')}
               </p>
               <p className="mt-3 text-3xl font-semibold text-[var(--theme-foreground)]">
                 {categories.length}
@@ -93,7 +118,7 @@ export default async function HomePage({ params }: HomePageProps) {
             <div className="space-y-5">
               <div className="flex items-center justify-between gap-4">
                 <h2 className="text-2xl font-semibold tracking-tight text-[var(--theme-foreground)]">
-                  {translateMessage(messages, 'home.featuredTitle')}
+                  {translateMessage(messages, 'blog.featuredTitle')}
                 </h2>
               </div>
               <div className="grid gap-5 lg:grid-cols-2">
@@ -118,17 +143,9 @@ export default async function HomePage({ params }: HomePageProps) {
           ) : null}
 
           <div className="space-y-5">
-            <div className="flex items-center justify-between gap-4">
-              <h2 className="text-2xl font-semibold tracking-tight text-[var(--theme-foreground)]">
-                {translateMessage(messages, 'home.latestTitle')}
-              </h2>
-              <Link
-                href={buildLocalePath(locale, '/blog')}
-                className="text-sm font-semibold text-[var(--theme-accent)]"
-              >
-                {translateMessage(messages, 'home.viewAll')}
-              </Link>
-            </div>
+            <h2 className="text-2xl font-semibold tracking-tight text-[var(--theme-foreground)]">
+              {translateMessage(messages, 'blog.latestTitle')}
+            </h2>
 
             {recentPosts.length > 0 ? (
               <div className="grid gap-5">
@@ -160,7 +177,7 @@ export default async function HomePage({ params }: HomePageProps) {
         <aside className="space-y-6">
           <div className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
             <p className="text-sm font-semibold tracking-[0.18em] text-[var(--theme-accent)] uppercase">
-              {translateMessage(messages, 'home.categoriesTitle')}
+              {translateMessage(messages, 'blog.categoriesTitle')}
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
               {categories.map((category) => (
@@ -173,6 +190,26 @@ export default async function HomePage({ params }: HomePageProps) {
                   className="rounded-full border border-[var(--theme-border)] px-3 py-2 text-sm text-[var(--theme-foreground)] transition hover:border-[var(--theme-accent)] hover:text-[var(--theme-accent)]"
                 >
                   {category.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+            <p className="text-sm font-semibold tracking-[0.18em] text-[var(--theme-accent)] uppercase">
+              {translateMessage(messages, 'blog.tagsTitle')}
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <Link
+                  key={tag.id}
+                  href={buildLocalePath(
+                    locale,
+                    `/tag/${encodeURIComponent(tag.slug)}`,
+                  )}
+                  className="rounded-full bg-white/80 px-3 py-2 text-sm text-[var(--theme-muted)] transition hover:text-[var(--theme-foreground)]"
+                >
+                  #{tag.name}
                 </Link>
               ))}
             </div>
