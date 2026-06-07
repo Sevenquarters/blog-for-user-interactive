@@ -15,9 +15,10 @@ import { AuthSubmitButton } from './auth-submit-button';
 type LoginFormProps = {
   locale: Locale;
   next: string | null;
+  disabled?: boolean;
 };
 
-export function LoginForm({ locale, next }: LoginFormProps) {
+export function LoginForm({ locale, next, disabled = false }: LoginFormProps) {
   const t = useTranslations();
   const loginForLocale = loginAction.bind(null, locale);
   const [state, formAction] = useActionState(
@@ -38,6 +39,7 @@ export function LoginForm({ locale, next }: LoginFormProps) {
           type="email"
           name="email"
           required
+          disabled={disabled}
           className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)] transition outline-none focus:border-[var(--theme-accent)]"
         />
       </label>
@@ -50,6 +52,7 @@ export function LoginForm({ locale, next }: LoginFormProps) {
           type="password"
           name="password"
           required
+          disabled={disabled}
           className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)] transition outline-none focus:border-[var(--theme-accent)]"
         />
       </label>
@@ -58,6 +61,7 @@ export function LoginForm({ locale, next }: LoginFormProps) {
         <AuthSubmitButton
           idleLabel={t('auth.loginSubmit')}
           pendingLabel={t('auth.loginPending')}
+          disabled={disabled}
         />
         <Link
           href={buildLocalePath(locale, '/reset-password')}

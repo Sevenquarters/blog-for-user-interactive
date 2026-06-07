@@ -7,7 +7,7 @@ Phase 2 establishes the database and authentication foundation for a bilingual b
 - Next.js App Router with TypeScript
 - Tailwind CSS, ESLint, and Prettier
 - Next.js-native i18n for English and Simplified Chinese
-- Supabase SSR client setup for browser, server, and middleware contexts
+- Supabase SSR client setup for browser, server, and proxy contexts
 - Supabase SQL migrations for schema, roles, RLS policies, and storage bucket setup
 - Seed data for site settings, categories, tags, and the default theme
 - Auth flows for login, logout, password reset, and profile loading
@@ -61,13 +61,23 @@ cp .env.example .env.local
 Required values:
 
 - `NEXT_PUBLIC_APP_URL`
-  Used for auth redirect URLs and app-aware links.
+  Optional but recommended. Used as the canonical base URL for auth email redirects when explicitly configured.
+  If omitted, the password reset flow falls back to the current request origin.
 - `NEXT_PUBLIC_SUPABASE_URL`
-  Your Supabase project URL.
+  Your Supabase project base URL, such as `https://your-project-id.supabase.co`.
+  Do not use the REST API endpoint ending with `/rest/v1/`.
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
   Browser-safe publishable key used by the SSR client.
 - `SUPABASE_SECRET_KEY`
   Reserved for future trusted server-side operations. Never expose it to the client.
+
+For local development, place these values in `.env.local`.
+
+For Vercel deployment, create the same variables in the Vercel project settings for:
+
+- Production
+- Preview
+- Development, if you use `vercel env pull`
 
 ## Supabase Setup
 
@@ -112,7 +122,7 @@ The `handle_new_user` trigger automatically creates a matching `profiles` row wh
 If you need an initial admin user:
 
 1. Create the user in Supabase Auth.
-2. Update that user’s `profiles.role` to `admin` in the database.
+2. Update that user's `profiles.role` to `admin` in the database.
 
 New users default to the `author` role.
 
@@ -134,7 +144,14 @@ npm run dev
 
 4. Open [http://localhost:3000](http://localhost:3000)
 
-The middleware redirects `/` to `/{locale}` based on the saved locale cookie or browser language.
+The Next.js proxy redirects `/` to `/{locale}` based on the saved locale cookie or browser language.
+
+## Vercel Notes
+
+- Set `NEXT_PUBLIC_SUPABASE_URL` to the project base URL without `/rest/v1/`
+- Set `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in every environment where auth should work
+- Set `NEXT_PUBLIC_APP_URL` to your deployed site URL if you want explicit password reset redirect URLs
+- Keep `SUPABASE_SECRET_KEY` server-only and never expose it through client code
 
 ## Route Structure
 

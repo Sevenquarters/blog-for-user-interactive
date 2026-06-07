@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-import { getPublicEnv, hasSupabaseEnv } from '@/lib/env';
+import { getSupabasePublicEnv, hasSupabaseEnv } from '@/lib/env';
 
 export async function updateSupabaseSession(request: NextRequest) {
   let response = NextResponse.next({
@@ -12,7 +12,7 @@ export async function updateSupabaseSession(request: NextRequest) {
     return response;
   }
 
-  const env = getPublicEnv();
+  const env = getSupabasePublicEnv();
 
   const supabase = createServerClient(
     env.NEXT_PUBLIC_SUPABASE_URL,

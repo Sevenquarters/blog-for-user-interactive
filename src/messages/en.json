@@ -44,9 +44,12 @@
     "resetPending": "Sending...",
     "updatePasswordSubmit": "Update password",
     "updatePasswordPending": "Updating...",
+    "setupMissingTitle": "Supabase environment is not configured",
+    "setupMissingDescription": "Create a .env.local file and provide the variables below, then restart the development server before trying to sign in again.",
     "resetLink": "Forgot password?",
     "backToLogin": "Back to login",
     "errors": {
+      "missingSupabaseEnv": "Supabase environment variables are missing. Complete the local setup and restart the app.",
       "invalidCredentials": "The email or password is incorrect.",
       "resetRequestFailed": "The recovery email could not be sent. Please try again.",
       "passwordTooShort": "Choose a password with at least 8 characters.",

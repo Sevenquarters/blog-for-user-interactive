@@ -1,36 +1,84 @@
 'use server';
 
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import type { EmailOtpType } from '@supabase/supabase-js';
 
-import { getPublicEnv } from '@/lib/env';
+import { ensureProfileForUser } from '@/lib/db/profiles';
+import { getOptionalAppUrl, isMissingSupabaseEnvError } from '@/lib/env';
 import type { Locale } from '@/i18n/config';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import type { AuthFormState } from '@/lib/auth/form-state';
 
 import { buildLocalePath, resolveSafeRedirect } from './paths';
 
+async function resolveAppUrl() {
+  const configuredAppUrl = getOptionalAppUrl();
+
+  if (configuredAppUrl) {
+    return configuredAppUrl.replace(/\/$/, '');
+  }
+
+  const requestHeaders = await headers();
+  const origin = requestHeaders.get('origin');
+
+  if (origin) {
+    return origin.replace(/\/$/, '');
+  }
+
+  const host =
+    requestHeaders.get('x-forwarded-host') ?? requestHeaders.get('host');
+
+  if (!host) {
+    return 'http://localhost:3000';
+  }
+
+  const protocol =
+    requestHeaders.get('x-forwarded-proto') ??
+    (host.includes('localhost') || host.startsWith('127.0.0.1')
+      ? 'http'
+      : 'https');
+
+  return `${protocol}://${host}`;
+}
+
 export async function loginAction(
   locale: Locale,
   _previousState: AuthFormState,
   formData: FormData,
 ) {
-  const supabase = await createSupabaseServerClient();
-  const email = String(formData.get('email') ?? '').trim();
-  const password = String(formData.get('password') ?? '');
-  const next = resolveSafeRedirect(locale, formData.get('next'), '/dashboard');
+  try {
+    const supabase = await createSupabaseServerClient();
+    const email = String(formData.get('email') ?? '').trim();
+    const password = String(formData.get('password') ?? '');
 
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  if (error) {
-    return {
-      status: 'error',
-      code: 'invalidCredentials',
-    } satisfies AuthFormState;
+    if (error) {
+      return {
+        status: 'error',
+        code: 'invalidCredentials',
+      } satisfies AuthFormState;
+    }
+
+    if (data.user) {
+      await ensureProfileForUser(data.user);
+    }
+  } catch (error) {
+    if (isMissingSupabaseEnvError(error)) {
+      return {
+        status: 'error',
+        code: 'missingSupabaseEnv',
+      } satisfies AuthFormState;
+    }
+
+    throw error;
   }
+
+  const next = resolveSafeRedirect(locale, formData.get('next'), '/dashboard');
 
   redirect(next);
 }
@@ -48,22 +96,33 @@ export async function requestPasswordResetAction(
   _previousState: AuthFormState,
   formData: FormData,
 ) {
-  const supabase = await createSupabaseServerClient();
-  const email = String(formData.get('email') ?? '').trim();
-  const env = getPublicEnv();
+  try {
+    const supabase = await createSupabaseServerClient();
+    const email = String(formData.get('email') ?? '').trim();
+    const appUrl = await resolveAppUrl();
 
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${env.NEXT_PUBLIC_APP_URL}${buildLocalePath(
-      locale,
-      '/auth/callback?next=/update-password&type=recovery',
-    )}`,
-  });
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${appUrl}${buildLocalePath(
+        locale,
+        '/auth/callback?next=/update-password&type=recovery',
+      )}`,
+    });
 
-  if (error) {
-    return {
-      status: 'error',
-      code: 'resetRequestFailed',
-    } satisfies AuthFormState;
+    if (error) {
+      return {
+        status: 'error',
+        code: 'resetRequestFailed',
+      } satisfies AuthFormState;
+    }
+  } catch (error) {
+    if (isMissingSupabaseEnvError(error)) {
+      return {
+        status: 'error',
+        code: 'missingSupabaseEnv',
+      } satisfies AuthFormState;
+    }
+
+    throw error;
   }
 
   return {
@@ -77,33 +136,44 @@ export async function updatePasswordAction(
   _previousState: AuthFormState,
   formData: FormData,
 ) {
-  const supabase = await createSupabaseServerClient();
-  const password = String(formData.get('password') ?? '');
-  const confirmPassword = String(formData.get('confirmPassword') ?? '');
+  try {
+    const supabase = await createSupabaseServerClient();
+    const password = String(formData.get('password') ?? '');
+    const confirmPassword = String(formData.get('confirmPassword') ?? '');
 
-  if (password.length < 8) {
-    return {
-      status: 'error',
-      code: 'passwordTooShort',
-    } satisfies AuthFormState;
-  }
+    if (password.length < 8) {
+      return {
+        status: 'error',
+        code: 'passwordTooShort',
+      } satisfies AuthFormState;
+    }
 
-  if (password !== confirmPassword) {
-    return {
-      status: 'error',
-      code: 'passwordMismatch',
-    } satisfies AuthFormState;
-  }
+    if (password !== confirmPassword) {
+      return {
+        status: 'error',
+        code: 'passwordMismatch',
+      } satisfies AuthFormState;
+    }
 
-  const { error } = await supabase.auth.updateUser({
-    password,
-  });
+    const { error } = await supabase.auth.updateUser({
+      password,
+    });
 
-  if (error) {
-    return {
-      status: 'error',
-      code: 'passwordUpdateFailed',
-    } satisfies AuthFormState;
+    if (error) {
+      return {
+        status: 'error',
+        code: 'passwordUpdateFailed',
+      } satisfies AuthFormState;
+    }
+  } catch (error) {
+    if (isMissingSupabaseEnvError(error)) {
+      return {
+        status: 'error',
+        code: 'missingSupabaseEnv',
+      } satisfies AuthFormState;
+    }
+
+    throw error;
   }
 
   redirect(buildLocalePath(locale, '/dashboard'));
