@@ -75,6 +75,7 @@ export default async function NewPostPage({
         post={editorData.post}
         categories={editorData.categories}
         tags={editorData.tags}
+        mediaOptions={editorData.mediaOptions}
       />
     </section>
   );

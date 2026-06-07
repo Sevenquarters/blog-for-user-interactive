@@ -118,6 +118,7 @@ export async function savePostAction(
 
   const selectedTranslation = readTranslation(formData, contentLocale);
   const categoryId = readTrimmedValue(formData, 'categoryId') || null;
+  const heroMediaId = readTrimmedValue(formData, 'heroMediaId') || null;
   const tagIds = formData
     .getAll('tagIds')
     .map((tagId) => String(tagId))
@@ -210,6 +211,7 @@ export async function savePostAction(
       postAuthorId: existingPostAuthorId,
       editorId: profile.id,
       categoryId,
+      heroMediaId,
       tagIds,
       status: requestedStatus,
       publishedAt: resolvePublishedAt(requestedStatus, publishedAtInput),

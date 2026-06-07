@@ -114,6 +114,7 @@ export default async function EditPostPage({
         post={editorData.post}
         categories={editorData.categories}
         tags={editorData.tags}
+        mediaOptions={editorData.mediaOptions}
       />
 
       <section className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-[0_18px_48px_rgba(15,23,42,0.06)]">

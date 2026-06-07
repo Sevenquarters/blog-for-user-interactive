@@ -16,6 +16,8 @@
     "blog": "博客",
     "dashboard": "控制台",
     "posts": "文章管理",
+    "media": "媒体库",
+    "comments": "评论审核",
     "profile": "个人资料",
     "admin": "管理",
     "login": "登录",
@@ -138,6 +140,8 @@
       "category": "分类",
       "none": "无",
       "featured": "设为精选文章",
+      "coverImage": "封面图片",
+      "coverImageEmpty": "这篇文章不设置封面图。",
       "changeSummary": "变更说明",
       "changeSummaryPlaceholder": "简单说明这次修订做了什么修改",
       "tags": "标签",
@@ -190,11 +194,110 @@
   },
   "admin": {
     "eyebrow": "仅限管理员路由",
-    "title": "管理概览",
-    "description": "这个路由仅对 admin 角色开放，并会通过数据库访问层读取预置的平台设置。",
+    "title": "展示管理",
+    "description": "在同一个后台中管理站点名称、默认语言、启用主题和面向前台的展示配色。",
     "currentRoleLabel": "当前角色",
     "siteNameLabel": "站点名称",
     "defaultLocaleLabel": "默认语言",
-    "activeThemeLabel": "当前主题"
+    "activeThemeLabel": "当前主题",
+    "settingsTitle": "站点展示设置",
+    "siteNameEnLabel": "站点名称（英文）",
+    "siteNameZhCnLabel": "站点名称（简体中文）",
+    "siteDescriptionEnLabel": "站点描述（英文）",
+    "siteDescriptionZhCnLabel": "站点描述（简体中文）",
+    "postsPerPageSettingLabel": "每页文章数",
+    "defaultLocaleSettingLabel": "默认语言",
+    "activeThemeSettingLabel": "启用主题",
+    "saveSettingsButton": "保存站点设置",
+    "themesTitle": "主题预设",
+    "activeThemeBadge": "当前启用",
+    "activateThemeButton": "启用主题",
+    "lightPreviewLabel": "浅色预览",
+    "darkPreviewLabel": "深色预览",
+    "lightTokensTitle": "浅色主题令牌",
+    "darkTokensTitle": "深色主题令牌",
+    "saveThemeButton": "保存主题令牌",
+    "tokenLabels": {
+      "background": "背景",
+      "surface": "表层",
+      "foreground": "前景",
+      "muted": "弱化文字",
+      "accent": "强调色",
+      "border": "边框"
+    },
+    "feedback": {
+      "saved": "站点设置已保存。",
+      "themeSaved": "主题令牌已保存。",
+      "themeActivated": "启用主题已更新。"
+    },
+    "errors": {
+      "saveFailed": "站点设置保存失败，请稍后重试。",
+      "themeIncomplete": "请先完整填写所有主题令牌。",
+      "themeSaveFailed": "主题令牌保存失败，请稍后重试。",
+      "themeActivateFailed": "启用主题更新失败，请稍后重试。"
+    }
+  },
+  "media": {
+    "eyebrow": "媒体工作台",
+    "title": "媒体库",
+    "description": "上传、补充说明、替换和删除文章可复用的图片素材，为内容管理提供共享资源。",
+    "uploadTitle": "上传新图片",
+    "libraryTitle": "已存储媒体",
+    "fileLabel": "图片文件",
+    "altTextEnLabel": "替代文本（英文）",
+    "altTextZhCnLabel": "替代文本（简体中文）",
+    "captionEnLabel": "说明文字（英文）",
+    "captionZhCnLabel": "说明文字（简体中文）",
+    "uploadButton": "上传图片",
+    "saveCopyButton": "保存说明",
+    "replaceFileLabel": "替换图片文件",
+    "replaceButton": "替换文件",
+    "deleteButton": "删除媒体",
+    "createdLabel": "上传时间",
+    "emptyState": "当前还没有媒体素材，先上传一张图片来建立共享媒体库。",
+    "feedback": {
+      "uploaded": "图片上传成功。",
+      "updated": "媒体说明已保存。",
+      "replaced": "图片文件已替换。",
+      "deleted": "媒体素材已删除。"
+    },
+    "errors": {
+      "invalidImage": "请先选择有效的图片文件。",
+      "uploadFailed": "图片上传失败，请稍后重试。",
+      "updateFailed": "媒体说明保存失败，请稍后重试。",
+      "replaceFailed": "图片文件替换失败，请稍后重试。",
+      "deleteFailed": "媒体素材删除失败，请稍后重试。"
+    }
+  },
+  "comments": {
+    "eyebrow": "审核队列",
+    "title": "评论审核",
+    "description": "在公开评论入口上线前，先在后台审核待处理评论、通过正常内容并清理垃圾信息。",
+    "filters": {
+      "all": "全部"
+    },
+    "status": {
+      "pending": "待审核",
+      "approved": "已通过",
+      "rejected": "已拒绝",
+      "spam": "垃圾评论"
+    },
+    "postLabel": "所属文章",
+    "authorLabel": "作者",
+    "localeLabel": "语言",
+    "createdLabel": "创建时间",
+    "approve": "通过",
+    "reject": "拒绝",
+    "markSpam": "标记垃圾",
+    "delete": "删除",
+    "emptyState": "当前筛选条件下没有评论。",
+    "feedback": {
+      "statusUpdated": "评论状态已更新。",
+      "deleted": "评论已删除。"
+    },
+    "errors": {
+      "statusUpdateFailed": "评论状态更新失败，请稍后重试。",
+      "deleteFailed": "评论删除失败，请稍后重试。"
+    }
   }
 }

@@ -34,6 +34,19 @@ export async function ProtectedShell({
     },
   ];
 
+  if (role === 'admin' || role === 'editor') {
+    navigation.push(
+      {
+        href: buildLocalePath(locale, '/media'),
+        label: translateMessage(messages, 'nav.media'),
+      },
+      {
+        href: buildLocalePath(locale, '/comments'),
+        label: translateMessage(messages, 'nav.comments'),
+      },
+    );
+  }
+
   if (role === 'admin') {
     navigation.push({
       href: buildLocalePath(locale, '/admin'),

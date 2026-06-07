@@ -1,7 +1,7 @@
 update public.site_setting_translations
 set
   site_name = '交互式博客平台',
-  site_description = '一个基于 Supabase 与 Next.js 构建的双语互动博客平台。'
+  site_description = '一个基于 Supabase 与 Next.js 构建的交互式博客平台。'
 where site_settings_id = 1
   and locale = 'zh-CN';
 

@@ -1,6 +1,8 @@
 import 'server-only';
 
 import { listCategories, listTags } from '@/lib/db/taxonomy';
+import { listContentMediaOptions } from '@/lib/db/media';
+import { getSupabaseStoragePublicUrl } from '@/lib/supabase/public';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import type { Locale } from '@/i18n/config';
 import {
@@ -14,6 +16,7 @@ import {
 } from '@/lib/content/editor';
 import type {
   ContentCategoryOption,
+  ContentMediaOption,
   ContentRevisionRecord,
   ContentScopeSummary,
   ContentTagOption,
@@ -54,6 +57,21 @@ type RawManageablePostRow = {
   updated_at: string;
   reading_time_minutes: number | null;
   is_featured: boolean;
+  media_assets:
+    | {
+        id: string;
+        bucket_name: string;
+        storage_path: string;
+        file_name: string;
+        media_asset_translations:
+          | Array<{
+              locale: string;
+              alt_text: string | null;
+              caption: string | null;
+            }>
+          | null;
+      }
+    | null;
   categories:
     | Array<{
         id: string;
@@ -91,6 +109,7 @@ type SavePostInput = {
   publishedAt: string | null;
   readingTimeMinutes: number | null;
   isFeatured: boolean;
+  heroMediaId: string | null;
   changeSummary: string | null;
   translations: Record<'en' | 'zh-CN', PostTranslationEditorRecord>;
 };
@@ -103,6 +122,17 @@ const MANAGEABLE_POST_SELECT = `
   updated_at,
   reading_time_minutes,
   is_featured,
+  media_assets (
+    id,
+    bucket_name,
+    storage_path,
+    file_name,
+    media_asset_translations (
+      locale,
+      alt_text,
+      caption
+    )
+  ),
   categories (
     id,
     category_translations (
@@ -209,6 +239,30 @@ function mapTagOptions(
     );
 }
 
+function mapHeroMedia(
+  mediaAsset: RawManageablePostRow['media_assets'],
+  locale: Locale,
+): ContentMediaOption | null {
+  if (!mediaAsset) {
+    return null;
+  }
+
+  const translation =
+    mediaAsset.media_asset_translations?.find((item) => item.locale === locale) ??
+    mediaAsset.media_asset_translations?.[0];
+
+  return {
+    id: mediaAsset.id,
+    fileName: mediaAsset.file_name,
+    publicUrl: getSupabaseStoragePublicUrl(
+      mediaAsset.bucket_name,
+      mediaAsset.storage_path,
+    ),
+    altText: translation?.alt_text ?? '',
+    caption: translation?.caption ?? '',
+  };
+}
+
 function mapEditorTranslation(
   translation: ContentTranslationRow | null | undefined,
   locale: 'en' | 'zh-CN',
@@ -252,6 +306,7 @@ function mapManageablePost(
     isFeatured: row.is_featured,
     category: mapCategoryOption(row.categories, locale),
     tags: mapTagOptions(row.post_tags, locale),
+    heroMedia: mapHeroMedia(row.media_assets, locale),
     translations: {
       en: mapEditorTranslation(enTranslation, 'en'),
       'zh-CN': mapEditorTranslation(zhTranslation, 'zh-CN'),
@@ -312,6 +367,7 @@ async function insertRevision(
       readingTimeMinutes: input.readingTimeMinutes,
       isFeatured: input.isFeatured,
       categoryId: input.categoryId,
+      heroMediaId: input.heroMediaId,
       tagIds: input.tagIds,
     },
     translations: {
@@ -415,6 +471,7 @@ async function createOrUpdatePostRecord(input: SavePostInput) {
       .insert({
         author_id: input.postAuthorId,
         category_id: input.categoryId,
+        hero_media_id: input.heroMediaId,
         status: input.status,
         published_at: input.publishedAt,
         is_featured: input.isFeatured,
@@ -432,6 +489,7 @@ async function createOrUpdatePostRecord(input: SavePostInput) {
     .from('posts')
     .update({
       category_id: input.categoryId,
+      hero_media_id: input.heroMediaId,
       status: input.status,
       published_at: input.publishedAt,
       is_featured: input.isFeatured,
@@ -523,9 +581,10 @@ export async function listManageablePosts(
 }
 
 export async function getPostEditorOptions(locale: Locale) {
-  const [categories, tags] = await Promise.all([
+  const [categories, tags, mediaOptions] = await Promise.all([
     listCategories(locale),
     listTags(locale),
+    listContentMediaOptions(locale),
   ]);
 
   return {
@@ -545,6 +604,7 @@ export async function getPostEditorOptions(locale: Locale) {
           name: tag.name,
         }) satisfies ContentTagOption,
     ),
+    mediaOptions,
   };
 }
 
@@ -600,6 +660,7 @@ export async function createEmptyPostEditor(locale: Locale) {
       updatedAt: new Date().toISOString(),
       readingTimeMinutes: null,
       isFeatured: false,
+      heroMedia: null,
       category: null,
       tags: [],
       translations: {
@@ -700,6 +761,7 @@ export async function generateSamplePublishedPosts(
       postAuthorId: authorId,
       editorId: authorId,
       categoryId,
+      heroMediaId: null,
       tagIds,
       status: samplePost.status,
       publishedAt: resolvePublishedAt(samplePost.status, samplePost.publishedAt),

@@ -35,8 +35,8 @@ export type ThemeRecord = {
   name: string;
   slug: string;
   is_active: boolean;
-  tokens: Record<string, string>;
-  created_by: string;
+  tokens: Record<string, unknown>;
+  created_by: string | null;
   created_at: string;
   updated_at: string;
 };

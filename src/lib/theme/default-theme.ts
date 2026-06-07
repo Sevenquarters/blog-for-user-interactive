@@ -1,5 +1,7 @@
 import type { ThemeDefinition, ThemeMode, ThemeTokens } from '@/types/theme';
 
+export const DEFAULT_THEME_ID = '11111111-1111-1111-1111-111111111111';
+
 export const defaultTheme: ThemeDefinition = {
   name: 'editorial-sunrise',
   label: 'Editorial Sunrise',

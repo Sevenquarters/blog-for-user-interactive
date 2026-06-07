@@ -1,229 +1,120 @@
 # Roadmap
 
-## 1. Delivery Goal
+## Current Status
 
-Build a bilingual, responsive blog platform with public pages, secure admin tooling, theme management, image storage, and Vercel deployment.
+The repository is now beyond the original bootstrap stage. The implemented work is:
 
-## 2. Recommended Delivery Phases
+- Phase 1 foundation complete
+- Phase 2 database and authentication foundation complete
+- Phase 3 public blog and content management foundation complete
+- Phase 4 media, presentation management, and moderation foundation complete
 
-### Phase 0: Architecture Approval
+## Completed Phases
 
-Deliverables:
+### Phase 1: Foundation
 
-- approved architecture
-- approved schema direction
-- approved rendering strategy
-- approved i18n approach
+Completed:
 
-Exit criteria:
+- Next.js App Router with TypeScript
+- Tailwind CSS
+- ESLint and Prettier
+- locale-prefixed routing
+- browser locale detection and persistence
+- theme provider foundation
+- Supabase client setup
+- environment templates
 
-- architecture.md accepted
-- roadmap.md accepted
-- database-schema.md accepted
+### Phase 2: Database and authentication
 
-### Phase 1: Project Foundation
+Completed:
 
-Deliverables:
+- Supabase SQL migrations
+- Row Level Security policies
+- `admin`, `editor`, `author` roles
+- login, logout, password reset, and profile loading
+- protected route guards
+- shared database access layer
+- seed data for site settings, categories, tags, and default theme
 
-- React + TypeScript project bootstrap
-- TailwindCSS setup
-- Supabase client integration
-- environment configuration
-- base layout, routing, and shared component structure
-- `react-i18next` setup with English and Simplified Chinese translation files
-- Next.js-native i18n setup with English and Simplified Chinese dictionaries
+### Phase 3: Public blog and editorial foundation
 
-Acceptance criteria:
+Completed:
 
-- app runs locally
-- language switching works in navbar
-- browser language detection works
-- selected language persists
-- responsive shell is in place
-
-### Phase 2: Authentication and Access Control
-
-Deliverables:
-
-- login flow
-- password reset flow
-- profile setup
-- role-based route protection
-- auth-aware navigation
-
-Acceptance criteria:
-
-- unauthenticated users cannot reach admin routes
-- admin/editor users can sign in successfully
-- locale preference persists per user profile
-
-### Phase 3: Database and Content Model
-
-Deliverables:
-
-- tables and relationships created
-- RLS policies defined
-- post translation model implemented
-- comments model implemented
-- revision history model implemented
-- basic post view tracking implemented
-- category/tag translation model implemented
-- media metadata support implemented
-
-Acceptance criteria:
-
-- content can be created with separate English and Chinese versions
-- public queries return only published content
-- editor permissions are enforced
-
-### Phase 4: Public Blog Experience
-
-Deliverables:
-
-- home page
-- blog listing page
-- blog detail page
-- category/tag filtering
+- locale-aware home page
+- public blog archive and post detail pages
+- category and tag archive browsing
 - SEO metadata support
-- responsive article experience
+- published-only public queries
+- post view tracking
+- protected post CRUD
+- draft, scheduled, published, archived workflow
+- revision history viewing
+- sample content generation
+- single-content-first authoring flow on top of translation-capable storage
 
-Acceptance criteria:
+### Phase 4: Media and presentation management
 
-- published posts render cleanly in both languages
-- locale-aware navigation works
-- pages perform well on mobile and desktop
+Completed:
 
-### Phase 5: Admin Dashboard
+- protected media library for editors and admins
+- image upload, preview, text updates, replace, and delete
+- cover image selection in the post editor
+- admin presentation settings for site name, description, default locale, posts per page, and active theme
+- theme token editing and theme activation
+- comment moderation views for editors and admins
+- documentation cleanup for current project state
 
-Deliverables:
+## What Is Intentionally Not Done Yet
 
-- dashboard shell
-- post editor
-- draft/publish workflow
-- translation status indicators
-- media manager
+- public comment submission UI
+- taxonomy management UI
+- rich media browsing modal in the editor
+- advanced analytics dashboards
+- visual drag-and-drop theme builder
+- deployment hardening and launch checklist completion
+- automated integration or end-to-end test suite
 
-Acceptance criteria:
+## Recommended Next Phase
 
-- editors can create and update bilingual posts
-- authors can work on their own drafts within role limits
-- admins can upload and attach images
-- missing translation states are clear in the UI
+### Phase 5: Editorial Operations and Hardening
 
-### Phase 6: Theme Management
+Suggested scope:
 
-Deliverables:
+- category and tag management UI
+- richer dashboard metrics
+- public comment submission flow with moderation integration
+- better media browsing and search in the editor
+- validation polish and empty-state UX improvements
+- stronger testing coverage for auth, content, media, and moderation flows
 
-- theme token model
-- admin theme editor
-- active theme switching
-- public theme consumption via CSS variables
+## Optional Parallel Workstreams
 
-Acceptance criteria:
+### Editorial UX
 
-- admins can activate a theme without code changes
-- theme updates appear consistently across public pages
-- responsive behavior remains intact under all themes
+- richer post editor
+- preview workflow
+- scheduled publishing review tools
 
-### Phase 7: Hardening and Launch
+### Community features
 
-Deliverables:
+- public comments
+- moderation filters and bulk actions
 
-- QA pass
-- accessibility pass
-- error handling improvements
-- deployment pipeline
-- production environment setup
+### Platform quality
 
-Acceptance criteria:
+- test automation
+- deployment verification checklist
+- accessibility review
+- performance review
 
-- preview deployments work
-- production deployment is stable
-- critical flows are tested
+## Definition Of Current Project Readiness
 
-## 3. Suggested Build Order
+The project is currently ready for:
 
-1. Foundation and i18n shell
-2. Auth and role protection
-3. Schema and content services
-4. Public blog pages
-5. Admin content workflows
-6. Theme management
-7. QA, optimization, deployment
+- local development
+- authenticated editorial testing
+- public blog browsing verification
+- theme and site identity iteration
+- media workflow validation
 
-## 4. Major Workstreams
-
-### Frontend
-
-- routing and layouts
-- component system
-- responsive design
-- i18n integration
-- admin UX
-
-### Backend
-
-- schema creation
-- RLS
-- storage integration
-- content queries and mutations
-
-### Platform
-
-- Vercel environments
-- Supabase project configuration
-- secrets management
-- deployment checks
-
-## 5. Risks and Mitigations
-
-### Risk: SEO degradation if public pages are client-only
-
-Mitigation:
-
-- use Next.js rendering for public pages
-
-### Risk: Translation drift between Chinese and English posts
-
-Mitigation:
-
-- separate translation records
-- admin translation status indicators
-- publish validation rules if needed
-
-### Risk: Theme flexibility introduces UI inconsistency
-
-Mitigation:
-
-- constrain themes through design tokens
-- validate token completeness before activation
-
-### Risk: Storage becomes disorganized over time
-
-Mitigation:
-
-- track uploaded assets in database
-- define naming conventions and ownership metadata
-
-## 6. Recommended Milestone Reviews
-
-Pause for review after:
-
-1. project bootstrap and i18n shell
-2. auth and schema completion
-3. first public blog page end-to-end
-4. admin editor completion
-5. theme management completion
-
-## 7. Definition of Done
-
-The platform should be considered launch-ready when:
-
-- public pages are bilingual and responsive
-- admin workflows are secure
-- all user-facing UI text is translatable
-- content supports separate English and Chinese versions
-- schema supports comments, revision history, and basic post view tracking
-- image uploads and rendering work reliably
-- active theme can be changed from the dashboard
-- deployment works on Vercel with Supabase in production
+The project is not yet fully launch-ready for a production content operation because moderation, analytics, taxonomy management, automated testing, and release hardening are still partial.

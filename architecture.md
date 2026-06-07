@@ -1,434 +1,210 @@
 # Architecture
 
-## 1. Requirements Analysis
+## Current Direction
 
-This repository is currently greenfield, so the architecture can be designed cleanly around the requested platform goals:
+This repository is a Next.js and Supabase blog platform with:
 
-- Public-facing blog pages
-- Admin dashboard
-- Authentication
-- Theme management
-- Image storage
-- Responsive design
-- Bilingual experience in Simplified Chinese and English
-- Full deployment on Vercel with Supabase as the backend platform
+- bilingual UI in English and Simplified Chinese
+- public blog browsing
+- authenticated dashboard and post management
+- role-aware editorial access
+- Supabase Storage-backed media handling
+- admin presentation and theme controls
+- basic comment moderation and post view tracking
 
-## 2. Recommended Technical Direction
+The site UI is bilingual. Blog post authoring is currently single-content-first: the database remains translation-capable, but the editor does not force authors to maintain two language versions for every post.
 
-### Core Stack
+## Stack
 
-- Frontend: React + TypeScript
-- App framework: Next.js (recommended React framework for Vercel, SEO, routing, and hybrid rendering)
-- Styling: TailwindCSS
-- State management: React Context for app-wide concerns
-- Backend platform: Supabase
-- Database: PostgreSQL via Supabase
+- Framework: Next.js App Router
+- UI: React 19 + TypeScript
+- Styling: Tailwind CSS
+- Shared client state: React Context
+- Backend: Supabase
+- Database: PostgreSQL
 - File storage: Supabase Storage
-- Internationalization: Next.js App Router locale routing + server-loaded dictionaries + browser language detection + persisted preference
-- Deployment: Vercel
+- Deployment target: Vercel
 
-## 3. Why Next.js Is Recommended
-
-Although the product requirement says React, the best architectural fit is React through Next.js because it improves:
-
-- SEO for public blog pages
-- route-based code organization
-- server-side rendering and static generation for content pages
-- Vercel deployment experience
-- performance for public entry pages
-
-If the team wants a pure client-side React app later, that is possible, but it would be a weaker fit for public blog discoverability and page-load performance.
-
-## 4. High-Level System Architecture
+## High-Level Structure
 
 ```mermaid
 flowchart LR
-    A["Visitor Browser"] --> B["React App on Vercel"]
-    C["Admin Browser"] --> B
+    A["Public visitor"] --> B["Next.js app"]
+    C["Authenticated editor/admin"] --> B
     B --> D["Supabase Auth"]
     B --> E["Supabase Postgres"]
     B --> F["Supabase Storage"]
 ```
 
-## 5. Application Areas
+## Runtime Areas
 
-### Public Site
+### Public experience
 
-- home page
-- blog listing page
-- blog detail page
-- category and tag filtered views
-- search and pagination
-- theme switcher
-- language switcher
-- responsive navigation
+- locale-aware home page
+- blog archive
+- post detail pages
+- category and tag archives
+- SEO metadata
+- post view tracking
 
-### Admin Dashboard
+### Protected experience
 
-- secure login
-- post management
-- draft and publish workflow
+- dashboard
+- profile page
+- post list and editor
 - revision history
-- comment moderation
 - media library
-- theme configuration
-- profile and locale preferences
-- dashboard overview metrics
+- comment moderation
 
-### Shared Platform Capabilities
+### Admin-only experience
 
-- auth session handling
-- locale detection and persistence
-- theme persistence
-- route protection
-- common layout system
+- site presentation settings
+- active theme selection
+- theme token editing
 
-## 6. Frontend Architecture
+## Routing Model
 
-### Recommended App Structure
+### Public routes
 
-```text
-src/
-  app/ or pages/
-  components/
-  features/
-    auth/
-    blog/
-    admin/
-    media/
-    theme/
-    i18n/
-  contexts/
-  hooks/
-  lib/
-    supabase/
-    i18n/
-    utils/
-  types/
-  styles/
-public/
-  locales/
-    en/
-    zh-CN/
-```
+- `/{locale}`
+- `/{locale}/blog`
+- `/{locale}/blog/{slug}`
+- `/{locale}/category/{slug}`
+- `/{locale}/tag/{slug}`
 
-### Contexts
+### Auth routes
 
-Use React Context only for cross-cutting state that truly needs to be global:
+- `/{locale}/login`
+- `/{locale}/reset-password`
+- `/{locale}/update-password`
+- `/{locale}/auth/callback`
 
-- `AuthContext`: current user, auth status, role checks
-- `ThemeContext`: active theme, theme mode, persisted preference
-- `LocaleContext`: current language, switch action, preference persistence
-- `AppShellContext` (optional): mobile nav state, shared UI controls
+### Protected routes
 
-Avoid storing server data like posts in Context. Content should be fetched through feature-level data access functions so the app stays scalable.
+- `/{locale}/dashboard`
+- `/{locale}/profile`
+- `/{locale}/posts`
+- `/{locale}/posts/new`
+- `/{locale}/posts/{id}`
 
-## 7. Routing Model
+### Elevated moderation routes
 
-### Public Routes
+- `/{locale}/media`
+- `/{locale}/comments`
 
-- `/`
-- `/blog`
-- `/blog/[slug]`
-- `/category/[slug]`
-- `/tag/[slug]`
-- `/about` or other content pages if needed
+### Admin-only routes
 
-### Admin Routes
+- `/{locale}/admin`
 
-- `/admin`
-- `/admin/posts`
-- `/admin/posts/new`
-- `/admin/posts/[id]`
-- `/admin/media`
-- `/admin/themes`
-- `/admin/settings`
+## Internationalization
 
-### Auth Routes
+The implementation uses locale-prefixed routing and server-loaded dictionaries.
 
-- `/login`
-- `/reset-password`
+### What is bilingual today
 
-## 8. Rendering Strategy
+- navigation
+- authentication flows
+- dashboard and admin UI
+- public site copy
+- settings and moderation interfaces
 
-### Public Pages
+### What is not forced to be bilingual today
 
-- use static generation or incremental revalidation for blog list and blog detail pages
-- revalidate on publish and update events
-- keep translated slugs and metadata pre-renderable
+- blog post editing workflow
 
-### Admin Pages
+The schema still supports `post_translations`, category translations, tag translations, media text translations, and translated site settings, but the editorial UX currently optimizes for common blog usage instead of requiring parallel language entry for every post.
 
-- use authenticated client and server rendering as appropriate
-- keep admin pages protected behind auth and role checks
+## Theme Architecture
 
-## 9. Content Model Strategy
+Theme behavior is split into two layers:
 
-Use language-neutral base tables plus translation tables.
+1. Brand theme preset from the database
+2. User theme mode preference in the browser (`light`, `dark`, `system`)
 
-Example:
+The active theme preset is stored in Supabase and loaded into the `ThemeProvider` through the locale layout. Theme tokens are applied as CSS variables, so public and protected pages share the same visual system.
 
-- `posts` stores shared metadata such as author, status, timestamps, hero image, and SEO flags
-- `post_translations` stores locale-specific fields such as title, slug, excerpt, body, SEO title, and SEO description
-- `post_revisions` stores historical snapshots for recovery and editorial review
-- `comments` stores moderated public discussion linked to posts
+## Content Architecture
 
-This design is better than duplicating `title_en` and `title_zh` across every table because it:
+### Post data
 
-- scales better if more languages are added
-- keeps locale content consistent
-- simplifies fallback behavior
-- cleanly supports unique slugs per locale
+- `posts` stores shared metadata
+- `post_translations` stores locale-specific content
+- `post_revisions` stores save snapshots
+- `post_views` stores lightweight analytics events
 
-## 10. Internationalization Architecture
+### Current editor behavior
 
-### Approach
+- one content form is shown at a time
+- published posts need one publish-ready translation, not all translations
+- empty translation rows are pruned on save
 
-- Next.js App Router locale segments
-- middleware-based locale detection and redirection
-- server-loaded translation dictionaries
-- optional lightweight client locale context for switching and persistence
+## Media Architecture
 
-### Translation Sources
+- files are stored in the `blog-media` bucket
+- metadata lives in `media_assets`
+- alt text and captions live in `media_asset_translations`
+- posts reference media through `posts.hero_media_id`
+- editors and admins manage uploads through the media library
+- post editors can pick stored media as the cover image
 
-- static UI text: locale dictionaries under `src/messages/en.json` and `src/messages/zh-CN.json`
-- dynamic editorial content: translation rows in PostgreSQL
+## Comment Architecture
 
-### Language Detection Order
+The current implementation covers moderation only.
 
-1. logged-in user preference from profile
-2. persisted client preference
-3. browser language
-4. default fallback locale
+- comments are stored in `comments`
+- status options are `pending`, `approved`, `rejected`, and `spam`
+- editors and admins can review and change moderation state
+- there is no public comment submission UI yet
 
-### Persistence Rules
-
-- anonymous users: store selected locale locally
-- logged-in users: store locale in both local persistence and user profile
-- server middleware should also respect a locale cookie for first-visit routing
-
-### Navbar Language Switcher
-
-The navbar must expose:
-
-- English
-- Simplified Chinese
-
-Switching language should:
-
-- change UI strings immediately
-- navigate to locale-appropriate content when applicable
-- persist the selection
-
-### Content Fallback Rules
-
-- UI fallback: use default locale if a translation key is missing
-- post fallback: show only fully available locale content for public pages
-- admin fallback: clearly indicate missing translations for editors
-
-## 11. Theme Management Architecture
-
-### Scope
-
-The system should support more than a dark and light toggle. It should allow branded visual presets managed by admins.
-
-### Recommended Model
-
-- theme tokens stored in database
-- active theme reference stored in app settings
-- CSS variables generated from the selected theme
-- TailwindCSS extended to consume CSS variables
-
-### Example Theme Tokens
-
-- primary
-- secondary
-- accent
-- background
-- surface
-- text
-- muted
-- border
-- radius
-- font heading
-- font body
-
-### Behavior
-
-- admin can create, update, activate, and preview themes
-- public site reads active theme at runtime or build time
-- personal light and dark preference can remain separate from brand theme if desired
-
-## 12. Authentication and Authorization
-
-### Auth
-
-Use Supabase Auth for:
-
-- email and password login
-- password reset
-- session handling
+## Security Model
 
 ### Roles
 
-Recommended initial roles:
-
-- `admin`
-- `editor`
 - `author`
+- `editor`
+- `admin`
 
-### Authorization
+### Enforcement
 
-- public users can read published content only
-- authenticated admins and editors can access the dashboard
-- authors can create and edit their own drafts if that workflow is enabled
-- only admins can manage theme settings and global configuration
+- application route guards via shared auth helpers
+- Supabase RLS on app tables
+- Supabase Storage policies on the media bucket
 
-Enforce authorization in both:
+### Practical access rules
 
-- application route guards
-- Supabase Row Level Security policies
+- authors manage only their own posts
+- editors and admins can manage posts across the workspace
+- editors and admins can use moderation routes
+- only admins can change site presentation settings and theme presets
 
-## 13. Media and Storage Architecture
+## Data Access Pattern
 
-### Storage
+Server-side data access is organized in `src/lib/db/`.
 
-Use Supabase Storage for:
+Current repository areas include:
 
-- post hero images
-- inline rich content images
-- theme assets if needed
-
-### Bucket Recommendation
-
-- `blog-media`
-
-### Media Rules
-
-- public published assets can be served publicly
-- admin upload permissions must be authenticated
-- save metadata in a `media_assets` table for search, attribution, and cleanup
-
-## 14. Responsive Design Strategy
-
-The UI should be mobile-first with clear breakpoints for:
-
-- phone
-- tablet
-- laptop
-- desktop
-
-Key responsive areas:
-
-- navbar and language switcher
-- blog card layouts
-- article typography and image scaling
-- admin sidebar and tables
-- theme preview panels
-
-## 15. Supabase Responsibilities
-
-### PostgreSQL
-
-- posts
-- translations
-- comments
-- revisions
-- view tracking
-- categories
-- tags
-- profiles
+- auth profile loading
+- public blog queries
+- content post management
+- taxonomy access
+- site settings
 - themes
-- settings
-- media metadata
+- media assets
+- comments
 
-### Auth
+This keeps page code relatively thin and allows route protection and mutation logic to stay centralized.
 
-- user identities
-- sessions
-- password recovery
+## Current Tradeoffs
 
-### Storage
+- post schema remains translation-capable even though the editor is no longer dual-language-first
+- public pages still benefit from locale-aware content fallback
+- media replacement and deletion are intentionally routed through elevated roles
+- theme editing currently focuses on preset activation and token updates, not a fully visual theme builder
 
-- uploaded images
-- derived media references
+## Near-Term Follow-Up Areas
 
-## 16. Vercel Responsibilities
-
-- host frontend
-- manage preview deployments
-- store environment variables
-- connect to GitHub-based deployment workflow
-
-Recommended environments:
-
-- local
-- preview
-- production
-
-## 17. Security Model
-
-### Key Controls
-
-- Supabase RLS enabled on all private tables
-- role-based admin routes
-- secure storage upload rules
-- environment secrets isolated by environment
-- server-side validation for admin mutations
-
-### Sensitive Areas
-
-- theme settings
-- global site settings
-- publish actions
-- media deletion
-- locale preference updates
-
-## 18. Performance and SEO
-
-### Performance
-
-- pre-render public content
-- optimize images
-- lazy load heavy admin modules
-- cache common queries where appropriate
-
-### SEO
-
-- translated metadata per post
-- canonical URLs
-- locale-aware slugs
-- sitemap generation
-- Open Graph tags
-- basic view tracking for editorial insight
-
-## 19. Observability and Quality
-
-Recommended from the first implementation phase:
-
-- linting
-- type checking
-- basic unit tests for utility and context logic
-- integration tests for auth and admin flows
-- error tracking
-
-## 20. Proposed Implementation Principles
-
-- keep server data access centralized
-- keep contexts thin and intentional
-- keep public rendering SEO-first
-- treat all user-facing UI strings as translatable
-- treat bilingual content as first-class, not as an afterthought
-- build admin tools that make missing translations visible
-
-## 21. Decisions To Confirm Before Implementation
-
-These are the main architectural decisions embedded in this proposal:
-
-1. Use Next.js as the React foundation for better SEO and Vercel alignment
-2. Use translation tables instead of duplicated bilingual columns
-3. Use database-backed theme tokens plus CSS variables
-4. Use Supabase Auth roles with RLS for admin protection, including `author`
-5. Use Next.js-native i18n instead of `react-i18next`
-
-If these are approved, implementation can start cleanly without rework.
+- public comment submission flow
+- taxonomy management UI
+- richer editorial analytics
+- image dimension extraction and stronger media metadata
+- broader automated test coverage

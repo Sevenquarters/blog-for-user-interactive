@@ -16,6 +16,8 @@
     "blog": "Blog",
     "dashboard": "Dashboard",
     "posts": "Posts",
+    "media": "Media",
+    "comments": "Comments",
     "profile": "Profile",
     "admin": "Admin",
     "login": "Sign in",
@@ -138,6 +140,8 @@
       "category": "Category",
       "none": "None",
       "featured": "Featured post",
+      "coverImage": "Cover image",
+      "coverImageEmpty": "Leave the post without a cover image.",
       "changeSummary": "Change summary",
       "changeSummaryPlaceholder": "Describe what changed in this revision",
       "tags": "Tags",
@@ -190,11 +194,110 @@
   },
   "admin": {
     "eyebrow": "Admin-only route",
-    "title": "Administrative overview",
-    "description": "This route is restricted to the admin role and reads seeded platform settings through the database layer.",
+    "title": "Presentation management",
+    "description": "Manage the public-facing site identity, default locale, active theme, and token-based presentation settings from one admin workspace.",
     "currentRoleLabel": "Current role",
     "siteNameLabel": "Site name",
     "defaultLocaleLabel": "Default locale",
-    "activeThemeLabel": "Active theme"
+    "activeThemeLabel": "Active theme",
+    "settingsTitle": "Site identity settings",
+    "siteNameEnLabel": "Site name (English)",
+    "siteNameZhCnLabel": "Site name (Simplified Chinese)",
+    "siteDescriptionEnLabel": "Site description (English)",
+    "siteDescriptionZhCnLabel": "Site description (Simplified Chinese)",
+    "postsPerPageSettingLabel": "Posts per page",
+    "defaultLocaleSettingLabel": "Default locale",
+    "activeThemeSettingLabel": "Active theme preset",
+    "saveSettingsButton": "Save site settings",
+    "themesTitle": "Theme presets",
+    "activeThemeBadge": "Active theme",
+    "activateThemeButton": "Activate theme",
+    "lightPreviewLabel": "Light preview",
+    "darkPreviewLabel": "Dark preview",
+    "lightTokensTitle": "Light theme tokens",
+    "darkTokensTitle": "Dark theme tokens",
+    "saveThemeButton": "Save theme tokens",
+    "tokenLabels": {
+      "background": "Background",
+      "surface": "Surface",
+      "foreground": "Foreground",
+      "muted": "Muted",
+      "accent": "Accent",
+      "border": "Border"
+    },
+    "feedback": {
+      "saved": "Site settings were saved successfully.",
+      "themeSaved": "Theme tokens were saved successfully.",
+      "themeActivated": "The active theme was updated successfully."
+    },
+    "errors": {
+      "saveFailed": "The site settings could not be saved. Please try again.",
+      "themeIncomplete": "Complete every theme token before saving the preset.",
+      "themeSaveFailed": "The theme tokens could not be saved. Please try again.",
+      "themeActivateFailed": "The active theme could not be updated. Please try again."
+    }
+  },
+  "media": {
+    "eyebrow": "Media workspace",
+    "title": "Media library",
+    "description": "Upload, describe, replace, and remove image assets that can be reused across published posts and editorial workflows.",
+    "uploadTitle": "Upload a new image",
+    "libraryTitle": "Stored media",
+    "fileLabel": "Image file",
+    "altTextEnLabel": "Alt text (English)",
+    "altTextZhCnLabel": "Alt text (Simplified Chinese)",
+    "captionEnLabel": "Caption (English)",
+    "captionZhCnLabel": "Caption (Simplified Chinese)",
+    "uploadButton": "Upload image",
+    "saveCopyButton": "Save copy",
+    "replaceFileLabel": "Replace image file",
+    "replaceButton": "Replace file",
+    "deleteButton": "Delete media",
+    "createdLabel": "Uploaded",
+    "emptyState": "No media assets are available yet. Upload an image to start building the shared library.",
+    "feedback": {
+      "uploaded": "The image was uploaded successfully.",
+      "updated": "The media text was updated successfully.",
+      "replaced": "The media file was replaced successfully.",
+      "deleted": "The media asset was deleted successfully."
+    },
+    "errors": {
+      "invalidImage": "Choose a valid image file before submitting.",
+      "uploadFailed": "The image upload failed. Please try again.",
+      "updateFailed": "The media text could not be saved. Please try again.",
+      "replaceFailed": "The image file could not be replaced. Please try again.",
+      "deleteFailed": "The media asset could not be deleted. Please try again."
+    }
+  },
+  "comments": {
+    "eyebrow": "Moderation queue",
+    "title": "Comment moderation",
+    "description": "Review pending discussion, approve legitimate comments, and remove spam before public comment experiences go live.",
+    "filters": {
+      "all": "All"
+    },
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "spam": "Spam"
+    },
+    "postLabel": "Post",
+    "authorLabel": "Author",
+    "localeLabel": "Locale",
+    "createdLabel": "Created",
+    "approve": "Approve",
+    "reject": "Reject",
+    "markSpam": "Mark as spam",
+    "delete": "Delete",
+    "emptyState": "No comments match the current moderation filter.",
+    "feedback": {
+      "statusUpdated": "The comment status was updated successfully.",
+      "deleted": "The comment was deleted successfully."
+    },
+    "errors": {
+      "statusUpdateFailed": "The comment status could not be updated. Please try again.",
+      "deleteFailed": "The comment could not be deleted. Please try again."
+    }
   }
 }

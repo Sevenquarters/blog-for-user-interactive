@@ -1,8 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
+
 import { getMessages } from '@/i18n/dictionaries';
 import { translateMessage } from '@/i18n/messages';
 import type { Locale } from '@/i18n/config';
 import type {
   ContentCategoryOption,
+  ContentMediaOption,
   ContentTagOption,
   ManageablePostEditorRecord,
 } from '@/types/content';
@@ -13,6 +16,7 @@ type PostEditorFormProps = {
   post: ManageablePostEditorRecord;
   categories: ContentCategoryOption[];
   tags: ContentTagOption[];
+  mediaOptions: ContentMediaOption[];
 };
 
 function hasMeaningfulTranslationContent(
@@ -69,6 +73,7 @@ export async function PostEditorForm({
   post,
   categories,
   tags,
+  mediaOptions,
 }: PostEditorFormProps) {
   const messages = await getMessages(locale);
   const isEditing = Boolean(post.id);
@@ -78,6 +83,7 @@ export async function PostEditorForm({
     : null;
   const selectedTagIds = new Set(post.tags.map((tag) => tag.id));
   const translation = resolveEditorTranslation(post, locale);
+  const selectedHeroMediaId = post.heroMedia?.id ?? '';
 
   return (
     <div className="space-y-6">
@@ -204,6 +210,54 @@ export async function PostEditorForm({
                     defaultChecked={selectedTagIds.has(tag.id)}
                   />
                   {tag.name}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="mt-6 space-y-3">
+            <legend className="text-sm font-medium text-[var(--theme-foreground)]">
+              {translateMessage(messages, 'content.fields.coverImage')}
+            </legend>
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              <label className="flex cursor-pointer flex-col justify-between rounded-[1.5rem] border border-[var(--theme-border)] bg-white/80 p-4 text-sm text-[var(--theme-foreground)]">
+                <span className="inline-flex items-center gap-3">
+                  <input
+                    type="radio"
+                    name="heroMediaId"
+                    value=""
+                    defaultChecked={selectedHeroMediaId === ''}
+                  />
+                  {translateMessage(messages, 'content.fields.none')}
+                </span>
+                <span className="mt-6 text-sm text-[var(--theme-muted)]">
+                  {translateMessage(messages, 'content.fields.coverImageEmpty')}
+                </span>
+              </label>
+
+              {mediaOptions.map((mediaOption) => (
+                <label
+                  key={mediaOption.id}
+                  className="flex cursor-pointer flex-col gap-3 rounded-[1.5rem] border border-[var(--theme-border)] bg-white/80 p-4 text-sm text-[var(--theme-foreground)]"
+                >
+                  <span className="inline-flex items-center gap-3">
+                    <input
+                      type="radio"
+                      name="heroMediaId"
+                      value={mediaOption.id}
+                      defaultChecked={selectedHeroMediaId === mediaOption.id}
+                    />
+                    <span className="font-medium">{mediaOption.fileName}</span>
+                  </span>
+                  <img
+                    src={mediaOption.publicUrl}
+                    alt={mediaOption.altText || mediaOption.fileName}
+                    className="h-40 w-full rounded-[1rem] object-cover"
+                  />
+                  <div className="space-y-1 text-sm text-[var(--theme-muted)]">
+                    <p>{mediaOption.altText || mediaOption.fileName}</p>
+                    {mediaOption.caption ? <p>{mediaOption.caption}</p> : null}
+                  </div>
                 </label>
               ))}
             </div>

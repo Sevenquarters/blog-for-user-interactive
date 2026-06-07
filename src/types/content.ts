@@ -26,6 +26,14 @@ export type ContentTagOption = {
   name: string;
 };
 
+export type ContentMediaOption = {
+  id: string;
+  fileName: string;
+  publicUrl: string;
+  altText: string;
+  caption: string;
+};
+
 export type ContentRevisionRecord = {
   id: string;
   revisionNumber: number;
@@ -43,6 +51,7 @@ export type ManageablePostListItem = {
   isFeatured: boolean;
   category: ContentCategoryOption | null;
   tags: ContentTagOption[];
+  heroMedia: ContentMediaOption | null;
   translations: Record<'en' | 'zh-CN', PostTranslationEditorRecord>;
 };
 
