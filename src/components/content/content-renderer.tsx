@@ -6,35 +6,14 @@ import {
   type TipTapInlineNode,
   type TipTapMark,
 } from '@/lib/content/content-format';
+import {
+  sanitizeContentHref,
+  sanitizeContentMediaSrc,
+} from '@/lib/content/content-sanitization';
 
 type ContentRendererProps = {
   content: unknown;
 };
-
-function sanitizeHref(href: string | null | undefined) {
-  if (!href) {
-    return null;
-  }
-
-  const normalized = href.trim();
-
-  if (!normalized) {
-    return null;
-  }
-
-  if (
-    normalized.startsWith('/') ||
-    normalized.startsWith('#') ||
-    normalized.startsWith('http://') ||
-    normalized.startsWith('https://') ||
-    normalized.startsWith('mailto:') ||
-    normalized.startsWith('tel:')
-  ) {
-    return normalized;
-  }
-
-  return null;
-}
 
 function applyMarks(
   content: ReactNode,
@@ -68,7 +47,7 @@ function applyMarks(
     }
 
     if (mark.type === 'link') {
-      const href = sanitizeHref(mark.attrs?.href);
+      const href = sanitizeContentHref(mark.attrs?.href);
 
       if (!href) {
         return result;
@@ -252,6 +231,93 @@ function renderBlockNode(
         key={key}
         className="border-0 border-t border-[var(--theme-border)]"
       />
+    );
+  }
+
+  if (block.type === 'codeBlock') {
+    const code = (block.content ?? [])
+      .map((node) => node.text)
+      .join('');
+
+    if (!code) {
+      return null;
+    }
+
+    return (
+      <pre
+        key={key}
+        className="overflow-x-auto rounded-[1.5rem] border border-[var(--theme-border)] bg-[#111827] px-5 py-4 text-sm leading-7 text-slate-100 shadow-[0_18px_48px_rgba(15,23,42,0.16)]"
+      >
+        <code>{code}</code>
+      </pre>
+    );
+  }
+
+  if (block.type === 'image') {
+    const src = sanitizeContentMediaSrc(block.attrs?.src);
+
+    if (!src) {
+      return null;
+    }
+
+    const alt = block.attrs?.alt?.trim() || '';
+    const caption = block.attrs?.caption?.trim() || '';
+    const width = block.attrs?.width ?? undefined;
+    const height = block.attrs?.height ?? undefined;
+
+    return (
+      <figure
+        key={key}
+        className="overflow-hidden rounded-[1.75rem] border border-[var(--theme-border)] bg-white/75 shadow-[0_18px_48px_rgba(15,23,42,0.08)]"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={src}
+          alt={alt}
+          width={width}
+          height={height}
+          className="block h-auto w-full"
+        />
+        {caption ? (
+          <figcaption className="px-5 py-4 text-sm leading-7 text-[var(--theme-muted)]">
+            {caption}
+          </figcaption>
+        ) : null}
+      </figure>
+    );
+  }
+
+  if (block.type === 'video') {
+    const src = sanitizeContentMediaSrc(block.attrs?.src);
+
+    if (!src) {
+      return null;
+    }
+
+    const title = block.attrs?.title?.trim() || '';
+    const caption = block.attrs?.caption?.trim() || '';
+    const width = block.attrs?.width ?? undefined;
+    const height = block.attrs?.height ?? undefined;
+
+    return (
+      <figure
+        key={key}
+        className="overflow-hidden rounded-[1.75rem] border border-[var(--theme-border)] bg-white/75 shadow-[0_18px_48px_rgba(15,23,42,0.08)]"
+      >
+        <video
+          src={src}
+          width={width}
+          height={height}
+          controls
+          preload="metadata"
+          className="block h-auto w-full bg-slate-950"
+        />
+        {caption || title ? (
+          <figcaption className="px-5 py-4 text-sm leading-7 text-[var(--theme-muted)]">
+            {caption || title}
+          </figcaption>
+        ) : null}
+      </figure>
     );
   }
 

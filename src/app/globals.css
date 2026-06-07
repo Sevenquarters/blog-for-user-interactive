@@ -42,3 +42,105 @@ a {
 button {
   font: inherit;
 }
+
+.tiptap-editor .ProseMirror {
+  min-height: 22rem;
+}
+
+.tiptap-editor .ProseMirror p {
+  margin: 0;
+}
+
+.tiptap-editor .ProseMirror > * + * {
+  margin-top: 1rem;
+}
+
+.tiptap-editor .ProseMirror h1,
+.tiptap-editor .ProseMirror h2,
+.tiptap-editor .ProseMirror h3 {
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.tiptap-editor .ProseMirror h1 {
+  font-size: 2rem;
+}
+
+.tiptap-editor .ProseMirror h2 {
+  font-size: 1.6rem;
+}
+
+.tiptap-editor .ProseMirror h3 {
+  font-size: 1.3rem;
+}
+
+.tiptap-editor .ProseMirror ul,
+.tiptap-editor .ProseMirror ol {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.tiptap-editor .ProseMirror blockquote {
+  margin: 0;
+  border-left: 4px solid var(--theme-accent);
+  padding-left: 1rem;
+  color: var(--theme-muted);
+}
+
+.tiptap-editor .ProseMirror pre {
+  margin: 0;
+  overflow-x: auto;
+  border-radius: 1rem;
+  background: #111827;
+  padding: 1rem 1.125rem;
+  color: #f8fafc;
+}
+
+.tiptap-editor .ProseMirror pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font-size: 0.95em;
+}
+
+.tiptap-editor .ProseMirror code {
+  border-radius: 0.4rem;
+  background: rgba(15, 23, 42, 0.08);
+  padding: 0.15rem 0.4rem;
+  font-size: 0.95em;
+}
+
+.tiptap-editor .ProseMirror hr {
+  border: 0;
+  border-top: 1px solid var(--theme-border);
+}
+
+.tiptap-editor .ProseMirror a {
+  color: var(--theme-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.tiptap-editor .ProseMirror img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 1rem;
+}
+
+.tiptap-editor .ProseMirror video {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  border-radius: 1rem;
+  background: #0f172a;
+}
+
+.tiptap-editor .ProseMirror .ProseMirror-selectednode {
+  outline: 3px solid rgba(194, 65, 12, 0.3);
+  outline-offset: 4px;
+}
+
+.tiptap-editor .ProseMirror:focus {
+  outline: none;
+}

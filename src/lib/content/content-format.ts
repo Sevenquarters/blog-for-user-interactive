@@ -61,6 +61,40 @@ export type TipTapHorizontalRuleNode = {
   type: 'horizontalRule';
 };
 
+export type TipTapCodeBlockNode = {
+  type: 'codeBlock';
+  attrs?: {
+    language?: string | null;
+  };
+  content?: TipTapTextNode[];
+};
+
+export type TipTapImageNode = {
+  type: 'image';
+  attrs?: {
+    src?: string | null;
+    alt?: string | null;
+    title?: string | null;
+    assetId?: string | null;
+    caption?: string | null;
+    width?: number | null;
+    height?: number | null;
+  };
+};
+
+export type TipTapVideoNode = {
+  type: 'video';
+  attrs?: {
+    src?: string | null;
+    title?: string | null;
+    assetId?: string | null;
+    caption?: string | null;
+    width?: number | null;
+    height?: number | null;
+    mimeType?: string | null;
+  };
+};
+
 export type TipTapBlockNode =
   | TipTapParagraphNode
   | TipTapHeadingNode
@@ -68,7 +102,10 @@ export type TipTapBlockNode =
   | TipTapListItemNode
   | TipTapBulletListNode
   | TipTapOrderedListNode
-  | TipTapHorizontalRuleNode;
+  | TipTapHorizontalRuleNode
+  | TipTapCodeBlockNode
+  | TipTapImageNode
+  | TipTapVideoNode;
 
 export type TipTapDoc = {
   type: 'doc';
@@ -266,6 +303,27 @@ function textareaSectionToBlocks(section: string): TipTapBlockNode[] {
 
   if (lines.length === 1 && /^(---|\*\*\*|___)$/.test(lines[0].trim())) {
     return [{ type: 'horizontalRule' }];
+  }
+
+  if (lines[0] === '```' && lines[lines.length - 1] === '```') {
+    const codeContent = lines.slice(1, -1).join('\n');
+
+    return codeContent
+      ? [
+          {
+            type: 'codeBlock',
+            attrs: {
+              language: null,
+            },
+            content: [
+              {
+                type: 'text',
+                text: codeContent,
+              },
+            ],
+          },
+        ]
+      : [];
   }
 
   const unorderedItems = lines
@@ -543,6 +601,44 @@ function blockToTextareaSection(
     return ['---'];
   }
 
+  if (block.type === 'codeBlock') {
+    const code = (block.content ?? [])
+      .map((node) => node.text)
+      .join('');
+
+    return code ? [`\`\`\`\n${code}\n\`\`\``] : [];
+  }
+
+  if (block.type === 'image') {
+    const alt = collapseWhitespace(block.attrs?.alt ?? '');
+    const src = collapseWhitespace(block.attrs?.src ?? '');
+
+    if (!alt && !src) {
+      return ['[Image]'];
+    }
+
+    if (!src) {
+      return [`![${alt}]`];
+    }
+
+    return [`![${alt || 'Image'}](${src})`];
+  }
+
+  if (block.type === 'video') {
+    const title = collapseWhitespace(block.attrs?.title ?? '');
+    const src = collapseWhitespace(block.attrs?.src ?? '');
+
+    if (!title && !src) {
+      return ['[Video]'];
+    }
+
+    if (!src) {
+      return [`[Video: ${title || 'Video'}]`];
+    }
+
+    return [`[Video: ${title || 'Video'}](${src})`];
+  }
+
   if (block.type === 'listItem') {
     const text = block.content
       ?.flatMap((child) => blockToTextareaSection(child))
@@ -586,6 +682,29 @@ function blockToPlainText(block: TipTapBlockNode): string[] {
     return [];
   }
 
+  if (block.type === 'codeBlock') {
+    const code = (block.content ?? [])
+      .map((node) => node.text)
+      .join(' ')
+      .trim();
+
+    return code ? [code] : [];
+  }
+
+  if (block.type === 'image') {
+    const alt = collapseWhitespace(block.attrs?.alt ?? '');
+    const caption = collapseWhitespace(block.attrs?.caption ?? '');
+
+    return [alt || caption || 'Image'];
+  }
+
+  if (block.type === 'video') {
+    const title = collapseWhitespace(block.attrs?.title ?? '');
+    const caption = collapseWhitespace(block.attrs?.caption ?? '');
+
+    return [title || caption || 'Video'];
+  }
+
   return [];
 }
 
@@ -604,7 +723,9 @@ export function hasRenderableContent(content: unknown) {
 
   return (
     doc.content.length > 0 &&
-    (doc.content.some((block) => block.type === 'horizontalRule') ||
+    (doc.content.some(
+      (block) => block.type === 'horizontalRule' || block.type === 'image',
+    ) ||
       Boolean(extractContentText(doc)))
   );
 }

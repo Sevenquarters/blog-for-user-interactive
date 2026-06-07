@@ -1,5 +1,8 @@
 import type { Locale } from '@/i18n/config';
-import { hasRenderableContent } from '@/lib/content/content-format';
+import {
+  createEmptyTipTapDoc,
+  hasRenderableContent,
+} from '@/lib/content/content-format';
 import type { PostStatus, PostTranslationEditorRecord } from '@/types/content';
 
 type SampleTranslation = {
@@ -43,6 +46,7 @@ export function buildDefaultTranslation(
     slug: '',
     excerpt: '',
     contentText: '',
+    contentJson: createEmptyTipTapDoc(),
     seoTitle: '',
     seoDescription: '',
     coverAlt: '',
@@ -51,7 +55,15 @@ export function buildDefaultTranslation(
 }
 
 export function isTranslationComplete(
-  translation: Omit<PostTranslationEditorRecord, 'locale' | 'isComplete'>,
+  translation: {
+    title: string;
+    slug: string;
+    excerpt: string;
+    contentText: string;
+    seoTitle: string;
+    seoDescription: string;
+    coverAlt: string;
+  },
 ) {
   return Boolean(
     translation.title.trim() &&

@@ -49,6 +49,31 @@ function formatDate(locale: string, value: string) {
   }).format(new Date(value));
 }
 
+function renderMediaPreview(
+  publicUrl: string,
+  mimeType: string,
+  altText: string,
+) {
+  if (mimeType.startsWith('video/')) {
+    return (
+      <video
+        src={publicUrl}
+        controls
+        preload="metadata"
+        className="h-64 w-full rounded-[1.5rem] bg-slate-950 object-cover"
+      />
+    );
+  }
+
+  return (
+    <img
+      src={publicUrl}
+      alt={altText}
+      className="h-64 w-full rounded-[1.5rem] object-cover"
+    />
+  );
+}
+
 export default async function MediaPage({
   params,
   searchParams,
@@ -110,7 +135,7 @@ export default async function MediaPage({
             <input
               type="file"
               name="file"
-              accept="image/*"
+              accept="image/*,video/*"
               className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
             />
           </label>
@@ -199,16 +224,15 @@ export default async function MediaPage({
                   className="grid gap-6 rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-[0_18px_48px_rgba(15,23,42,0.06)] lg:grid-cols-[20rem_1fr]"
                 >
                   <div className="space-y-4">
-                    <img
-                      src={mediaAsset.publicUrl}
-                      alt={
-                        mediaAsset.translations[locale].altText ||
-                        mediaAsset.fileName
-                      }
-                      className="h-64 w-full rounded-[1.5rem] object-cover"
-                    />
+                    {renderMediaPreview(
+                      mediaAsset.publicUrl,
+                      mediaAsset.mimeType,
+                      mediaAsset.translations[locale].altText ||
+                        mediaAsset.fileName,
+                    )}
                     <div className="space-y-1 text-sm text-[var(--theme-muted)]">
                       <p>{mediaAsset.fileName}</p>
+                      <p>{mediaAsset.mimeType}</p>
                       <p>{formatFileSize(mediaAsset.fileSizeBytes)}</p>
                       <p>
                         {translateMessage(messages, 'media.createdLabel')}:{' '}
@@ -283,7 +307,7 @@ export default async function MediaPage({
                         <input
                           type="file"
                           name="file"
-                          accept="image/*"
+                          accept="image/*,video/*"
                           className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                         />
                       </label>

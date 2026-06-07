@@ -8,6 +8,7 @@ The repository is now beyond the original bootstrap stage. The implemented work 
 - Phase 2 database and authentication foundation complete
 - Phase 3 public blog and content management foundation complete
 - Phase 4 media, presentation management, and moderation foundation complete
+- TipTap Stage 2A text-editor rollout complete
 
 ## Completed Phases
 
@@ -91,7 +92,9 @@ Suggested scope:
 
 ### Editorial UX
 
-- richer post editor
+- TipTap text editor complete for text-first authoring
+- inline media insertion pending
+- table support pending
 - preview workflow
 - scheduled publishing review tools
 

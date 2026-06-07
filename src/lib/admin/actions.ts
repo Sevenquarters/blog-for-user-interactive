@@ -10,6 +10,7 @@ import { deleteComment, updateCommentStatus } from '@/lib/db/comments';
 import {
   createMediaAsset,
   deleteMediaAsset,
+  isSupportedMediaMimeType,
   replaceMediaAssetFile,
   updateMediaTranslations,
 } from '@/lib/db/media';
@@ -87,7 +88,7 @@ export async function uploadMediaAction(locale: Locale, formData: FormData) {
   if (
     !(file instanceof File) ||
     file.size === 0 ||
-    !file.type.startsWith('image/')
+    !isSupportedMediaMimeType(file.type)
   ) {
     redirect(buildRedirectWithMessage(locale, '/media', 'error', 'invalidImage'));
   }
@@ -143,7 +144,7 @@ export async function replaceMediaFileAction(
   if (
     !(file instanceof File) ||
     file.size === 0 ||
-    !file.type.startsWith('image/')
+    !isSupportedMediaMimeType(file.type)
   ) {
     redirect(buildRedirectWithMessage(locale, '/media', 'error', 'invalidImage'));
   }

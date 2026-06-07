@@ -5,7 +5,11 @@ import { randomUUID } from 'node:crypto';
 import type { Locale } from '@/i18n/config';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { getSupabaseStoragePublicUrl } from '@/lib/supabase/public';
-import type { ContentMediaOption } from '@/types/content';
+import type {
+  ContentMediaOption,
+  EditorImageOption,
+  EditorMediaOption,
+} from '@/types/content';
 import type { MediaAssetRecord, MediaTranslationRecord } from '@/types/media';
 
 import { throwIfSupabaseError } from './utils';
@@ -40,6 +44,10 @@ type UpdateMediaTranslationsInput = {
   mediaAssetId: string;
   translations: Record<'en' | 'zh-CN', MediaTranslationRecord>;
 };
+
+export function isSupportedMediaMimeType(mimeType: string) {
+  return mimeType.startsWith('image/') || mimeType.startsWith('video/');
+}
 
 function sanitizeFileName(fileName: string) {
   const normalized = fileName
@@ -133,6 +141,12 @@ async function getMediaAssetRow(mediaAssetId: string) {
   return (data as MediaAssetRow | null) ?? null;
 }
 
+export async function getMediaAssetById(mediaAssetId: string) {
+  const row = await getMediaAssetRow(mediaAssetId);
+
+  return row ? mapMediaAsset(row) : null;
+}
+
 async function upsertMediaTranslations(input: UpdateMediaTranslationsInput) {
   const supabase = await createSupabaseServerClient();
   const rows = (
@@ -198,21 +212,65 @@ export async function listContentMediaOptions(locale: Locale, limit = 18) {
   const assets = await listMediaAssets(limit);
 
   return assets.map((asset) => {
-    const translation = resolvePreferredMediaTranslation(asset, locale);
-
-    return {
-      id: asset.id,
-      fileName: asset.fileName,
-      publicUrl: asset.publicUrl,
-      altText: translation.altText,
-      caption: translation.caption,
-    } satisfies ContentMediaOption;
+    return mapMediaAssetToContentOption(asset, locale);
   });
 }
 
+export function mapMediaAssetToContentOption(
+  asset: MediaAssetRecord,
+  locale: Locale,
+): ContentMediaOption {
+  const translation = resolvePreferredMediaTranslation(asset, locale);
+
+  return {
+    id: asset.id,
+    fileName: asset.fileName,
+    publicUrl: asset.publicUrl,
+    mimeType: asset.mimeType,
+    kind: asset.mimeType.startsWith('video/') ? 'video' : 'image',
+    width: asset.width,
+    height: asset.height,
+    altText: translation.altText,
+    caption: translation.caption,
+  } satisfies ContentMediaOption;
+}
+
+export function mapMediaAssetToEditorImageOption(
+  asset: MediaAssetRecord,
+  locale: Locale,
+): EditorImageOption | null {
+  if (!asset.mimeType.startsWith('image/')) {
+    return null;
+  }
+
+  return {
+    ...mapMediaAssetToContentOption(asset, locale),
+    kind: 'image',
+  };
+}
+
+export function mapMediaAssetToEditorMediaOption(
+  asset: MediaAssetRecord,
+  locale: Locale,
+): EditorMediaOption {
+  const mappedAsset = mapMediaAssetToContentOption(asset, locale);
+
+  if (mappedAsset.kind === 'video') {
+    return {
+      ...mappedAsset,
+      kind: 'video',
+    };
+  }
+
+  return {
+    ...mappedAsset,
+    kind: 'image',
+  };
+}
+
 export async function createMediaAsset(input: SaveMediaInput) {
-  if (!input.file.type.startsWith('image/')) {
-    throw new Error('Only image uploads are supported');
+  if (!isSupportedMediaMimeType(input.file.type)) {
+    throw new Error('Only image and video uploads are supported');
   }
 
   const buffer = Buffer.from(await input.file.arrayBuffer());
@@ -268,8 +326,8 @@ export async function replaceMediaAssetFile(
   actorId: string,
   file: File,
 ) {
-  if (!file.type.startsWith('image/')) {
-    throw new Error('Only image uploads are supported');
+  if (!isSupportedMediaMimeType(file.type)) {
+    throw new Error('Only image and video uploads are supported');
   }
 
   const existingAsset = await getMediaAssetRow(mediaAssetId);

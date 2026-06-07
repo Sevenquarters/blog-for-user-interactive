@@ -8,6 +8,7 @@ export type PostTranslationEditorRecord = {
   slug: string;
   excerpt: string;
   contentText: string;
+  contentJson: unknown;
   seoTitle: string;
   seoDescription: string;
   coverAlt: string;
@@ -26,17 +27,29 @@ export type ContentTagOption = {
   name: string;
 };
 
+export type ContentMediaKind = 'image' | 'video';
+
 export type ContentMediaOption = {
   id: string;
   fileName: string;
   publicUrl: string;
   mimeType?: string;
-  kind?: 'image' | 'video';
+  kind: ContentMediaKind;
   width?: number | null;
   height?: number | null;
   altText: string;
   caption: string;
 };
+
+export type EditorImageOption = ContentMediaOption & {
+  kind: 'image';
+};
+
+export type EditorVideoOption = ContentMediaOption & {
+  kind: 'video';
+};
+
+export type EditorMediaOption = EditorImageOption | EditorVideoOption;
 
 export type ContentRevisionRecord = {
   id: string;

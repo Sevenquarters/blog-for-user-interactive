@@ -7,6 +7,7 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
 import type { Locale } from '@/i18n/config';
 import {
   contentToTextareaText,
+  normalizeStoredContent,
   textareaTextToTipTapDoc,
 } from '@/lib/content/content-format';
 import {
@@ -289,6 +290,7 @@ function mapEditorTranslation(
     slug: translation.slug,
     excerpt: translation.excerpt ?? '',
     contentText: contentToTextareaText(translation.content),
+    contentJson: normalizeStoredContent(translation.content),
     seoTitle: translation.seo_title ?? '',
     seoDescription: translation.seo_description ?? '',
     coverAlt: translation.cover_alt ?? '',
@@ -372,6 +374,30 @@ async function insertRevision(
 ) {
   const supabase = await createSupabaseServerClient();
   const revisionNumber = await getNextRevisionNumber(postId);
+  const snapshotTranslations = {
+    en: {
+      locale: input.translations.en.locale,
+      title: input.translations.en.title,
+      slug: input.translations.en.slug,
+      excerpt: input.translations.en.excerpt,
+      contentText: input.translations.en.contentText,
+      seoTitle: input.translations.en.seoTitle,
+      seoDescription: input.translations.en.seoDescription,
+      coverAlt: input.translations.en.coverAlt,
+      isComplete: input.translations.en.isComplete,
+    },
+    'zh-CN': {
+      locale: input.translations['zh-CN'].locale,
+      title: input.translations['zh-CN'].title,
+      slug: input.translations['zh-CN'].slug,
+      excerpt: input.translations['zh-CN'].excerpt,
+      contentText: input.translations['zh-CN'].contentText,
+      seoTitle: input.translations['zh-CN'].seoTitle,
+      seoDescription: input.translations['zh-CN'].seoDescription,
+      coverAlt: input.translations['zh-CN'].coverAlt,
+      isComplete: input.translations['zh-CN'].isComplete,
+    },
+  };
   const snapshot = {
     post: {
       status: input.status,
@@ -382,10 +408,7 @@ async function insertRevision(
       heroMediaId: input.heroMediaId,
       tagIds: input.tagIds,
     },
-    translations: {
-      en: input.translations.en,
-      'zh-CN': input.translations['zh-CN'],
-    },
+    translations: snapshotTranslations,
   };
 
   const { error } = await supabase.from('post_revisions').insert({
@@ -414,8 +437,8 @@ function buildSavedTranslation(
   const normalizedSlug = (
     translation.slug.trim() || slugify(normalizedTitle)
   ).trim();
-  const normalizedContentText = translation.contentText.trim();
-  const content = textareaTextToTipTapDoc(normalizedContentText);
+  const content = normalizeStoredContent(translation.contentJson);
+  const normalizedContentText = contentToTextareaText(content);
 
   return {
     locale: translation.locale,
@@ -597,7 +620,7 @@ export async function getPostEditorOptions(locale: Locale) {
   const [categories, tags, mediaOptions] = await Promise.all([
     listCategories(locale),
     listTags(locale),
-    listContentMediaOptions(locale),
+    listContentMediaOptions(locale, 100),
   ]);
 
   return {
@@ -631,21 +654,23 @@ export async function getManageablePostEditorRecord(
   let query = supabase
     .from('posts')
     .select(MANAGEABLE_POST_SELECT)
-    .eq('id', postId);
+    .eq('id', postId)
+    .limit(1);
 
   if (role === 'author') {
     query = query.eq('author_id', actorId);
   }
 
-  const { data, error } = await query.maybeSingle();
+  const { data, error } = await query;
 
   throwIfSupabaseError(error, 'Unable to load editable post');
 
-  if (!data) {
+  const rawPost = ((data ?? []) as unknown as RawManageablePostRow[])[0] ?? null;
+
+  if (!rawPost) {
     return null;
   }
 
-  const post = data as unknown as RawManageablePostRow;
   const [editorOptions, revisions] = await Promise.all([
     getPostEditorOptions(locale),
     getPostRevisions(postId),
@@ -653,8 +678,8 @@ export async function getManageablePostEditorRecord(
 
   return {
     post: {
-      ...mapManageablePost(post, locale),
-      authorId: post.author_id,
+      ...mapManageablePost(rawPost, locale),
+      authorId: rawPost.author_id,
       revisions,
     } satisfies ManageablePostEditorRecord,
     ...editorOptions,
@@ -752,6 +777,9 @@ export async function generateSamplePublishedPosts(
         slug: expectedEnSlug,
         excerpt: samplePost.translations.en.excerpt,
         contentText: samplePost.translations.en.contentText,
+        contentJson: textareaTextToTipTapDoc(
+          samplePost.translations.en.contentText,
+        ),
         seoTitle: samplePost.translations.en.seoTitle,
         seoDescription: samplePost.translations.en.seoDescription,
         coverAlt: samplePost.translations.en.coverAlt,
@@ -763,6 +791,9 @@ export async function generateSamplePublishedPosts(
         slug: expectedZhSlug,
         excerpt: samplePost.translations['zh-CN'].excerpt,
         contentText: samplePost.translations['zh-CN'].contentText,
+        contentJson: textareaTextToTipTapDoc(
+          samplePost.translations['zh-CN'].contentText,
+        ),
         seoTitle: samplePost.translations['zh-CN'].seoTitle,
         seoDescription: samplePost.translations['zh-CN'].seoDescription,
         coverAlt: samplePost.translations['zh-CN'].coverAlt,

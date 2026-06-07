@@ -6,7 +6,11 @@ import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import type { Locale } from '@/i18n/config';
 import { buildLocalePath } from '@/lib/auth/paths';
 import { requireUser } from '@/lib/auth/session';
-import { hasRenderableContent } from '@/lib/content/content-format';
+import {
+  contentToTextareaText,
+  hasRenderableContent,
+  normalizeStoredContent,
+} from '@/lib/content/content-format';
 import {
   createEmptyPostEditor,
   deleteManageablePost,
@@ -54,7 +58,19 @@ function readTranslation(
   locale: 'en' | 'zh-CN',
 ): PostTranslationEditorRecord {
   const title = readTrimmedValue(formData, 'title');
-  const contentText = String(formData.get('contentText') ?? '').trim();
+  const contentJsonValue = String(formData.get('contentJson') ?? '').trim();
+  const fallbackContentText = String(formData.get('contentText') ?? '').trim();
+  let contentJson = normalizeStoredContent(fallbackContentText);
+
+  if (contentJsonValue) {
+    try {
+      contentJson = normalizeStoredContent(JSON.parse(contentJsonValue));
+    } catch {
+      contentJson = normalizeStoredContent(fallbackContentText);
+    }
+  }
+
+  const contentText = contentToTextareaText(contentJson);
 
   return {
     locale,
@@ -62,6 +78,7 @@ function readTranslation(
     slug: readTrimmedValue(formData, 'slug') || slugify(title),
     excerpt: readTrimmedValue(formData, 'excerpt'),
     contentText,
+    contentJson,
     seoTitle: readTrimmedValue(formData, 'seoTitle'),
     seoDescription: readTrimmedValue(formData, 'seoDescription'),
     coverAlt: readTrimmedValue(formData, 'coverAlt'),

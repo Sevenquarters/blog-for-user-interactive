@@ -1,15 +1,14 @@
-/* eslint-disable @next/next/no-img-element */
-
+import { RichPostEditor } from '@/components/content/rich-post-editor';
+import type { Locale } from '@/i18n/config';
 import { getMessages } from '@/i18n/dictionaries';
 import { translateMessage } from '@/i18n/messages';
-import type { Locale } from '@/i18n/config';
+import { deletePostAction, savePostAction } from '@/lib/content/actions';
 import type {
   ContentCategoryOption,
   ContentMediaOption,
   ContentTagOption,
   ManageablePostEditorRecord,
 } from '@/types/content';
-import { deletePostAction, savePostAction } from '@/lib/content/actions';
 
 type PostEditorFormProps = {
   locale: Locale;
@@ -19,35 +18,11 @@ type PostEditorFormProps = {
   mediaOptions: ContentMediaOption[];
 };
 
-function hasMeaningfulTranslationContent(
-  translation: ManageablePostEditorRecord['translations']['en'],
-) {
-  return Boolean(
-    translation.title.trim() ||
-      translation.slug.trim() ||
-      translation.excerpt.trim() ||
-      translation.contentText.trim() ||
-      translation.seoTitle.trim() ||
-      translation.seoDescription.trim() ||
-      translation.coverAlt.trim(),
-  );
-}
-
 function resolveEditorTranslation(
   post: ManageablePostEditorRecord,
   locale: Locale,
 ) {
-  const localizedTranslation = post.translations[locale];
-
-  if (hasMeaningfulTranslationContent(localizedTranslation)) {
-    return localizedTranslation;
-  }
-
-  return (
-    Object.values(post.translations).find((translation) =>
-      hasMeaningfulTranslationContent(translation),
-    ) ?? localizedTranslation
-  );
+  return post.translations[locale];
 }
 
 function toDatetimeLocalValue(value: string | null) {
@@ -84,6 +59,82 @@ export async function PostEditorForm({
   const selectedTagIds = new Set(post.tags.map((tag) => tag.id));
   const translation = resolveEditorTranslation(post, locale);
   const selectedHeroMediaId = post.heroMedia?.id ?? '';
+  const editorLabels = {
+    paragraph: translateMessage(messages, 'content.editor.paragraph'),
+    heading1: translateMessage(messages, 'content.editor.heading1'),
+    heading2: translateMessage(messages, 'content.editor.heading2'),
+    heading3: translateMessage(messages, 'content.editor.heading3'),
+    bold: translateMessage(messages, 'content.editor.bold'),
+    italic: translateMessage(messages, 'content.editor.italic'),
+    underline: translateMessage(messages, 'content.editor.underline'),
+    link: translateMessage(messages, 'content.editor.link'),
+    blockquote: translateMessage(messages, 'content.editor.blockquote'),
+    codeBlock: translateMessage(messages, 'content.editor.codeBlock'),
+    bulletList: translateMessage(messages, 'content.editor.bulletList'),
+    orderedList: translateMessage(messages, 'content.editor.orderedList'),
+    horizontalRule: translateMessage(messages, 'content.editor.horizontalRule'),
+    media: translateMessage(messages, 'content.editor.media'),
+    emoji: translateMessage(messages, 'content.editor.emoji'),
+    imageDialogTitle: translateMessage(messages, 'content.editor.imageDialogTitle'),
+    imageDialogClose: translateMessage(messages, 'content.editor.imageDialogClose'),
+    imageDialogExisting: translateMessage(
+      messages,
+      'content.editor.imageDialogExisting',
+    ),
+    imageDialogEmpty: translateMessage(messages, 'content.editor.imageDialogEmpty'),
+    imageDialogInsert: translateMessage(
+      messages,
+      'content.editor.imageDialogInsert',
+    ),
+    imageDialogFilterAll: translateMessage(
+      messages,
+      'content.editor.imageDialogFilterAll',
+    ),
+    imageDialogFilterImages: translateMessage(
+      messages,
+      'content.editor.imageDialogFilterImages',
+    ),
+    imageDialogFilterVideos: translateMessage(
+      messages,
+      'content.editor.imageDialogFilterVideos',
+    ),
+    linkBubbleUrl: translateMessage(messages, 'content.editor.linkBubbleUrl'),
+    linkBubbleSave: translateMessage(messages, 'content.editor.linkBubbleSave'),
+    linkBubbleRemove: translateMessage(
+      messages,
+      'content.editor.linkBubbleRemove',
+    ),
+    linkBubbleClose: translateMessage(messages, 'content.editor.linkBubbleClose'),
+    emojiPickerTitle: translateMessage(
+      messages,
+      'content.editor.emojiPickerTitle',
+    ),
+    hashtagSuggestionsTitle: translateMessage(
+      messages,
+      'content.editor.hashtagSuggestionsTitle',
+    ),
+    uploadStatusUploading: translateMessage(
+      messages,
+      'content.editor.uploadStatusUploading',
+    ),
+    uploadStatusComplete: translateMessage(
+      messages,
+      'content.editor.uploadStatusComplete',
+    ),
+    uploadStatusFailed: translateMessage(
+      messages,
+      'content.editor.uploadStatusFailed',
+    ),
+    uploadZoneTitle: translateMessage(messages, 'content.editor.uploadZoneTitle'),
+    uploadZoneDescription: translateMessage(
+      messages,
+      'content.editor.uploadZoneDescription',
+    ),
+    uploadZoneButton: translateMessage(
+      messages,
+      'content.editor.uploadZoneButton',
+    ),
+  };
 
   return (
     <div className="space-y-6">
@@ -96,102 +147,134 @@ export async function PostEditorForm({
         <input type="hidden" name="contentLocale" value={translation.locale} />
 
         <section className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-[0_18px_48px_rgba(15,23,42,0.06)]">
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            <label className="space-y-2">
+          <div className="space-y-4">
+            <label className="block space-y-2">
+              <span className="text-sm font-medium text-[var(--theme-foreground)]">
+                {translateMessage(messages, 'content.fields.title')}
+              </span>
+              <input
+                type="text"
+                name="title"
+                defaultValue={translation.title}
+                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
+              />
+            </label>
+
+            <label className="block space-y-2">
+              <span className="text-sm font-medium text-[var(--theme-foreground)]">
+                {translateMessage(messages, 'content.fields.content')}
+              </span>
+              <RichPostEditor
+                key={`${post.id || 'new'}-${translation.locale}-${post.updatedAt}`}
+                initialContent={translation.contentJson}
+                locale={translation.locale}
+                mediaOptions={mediaOptions}
+                tags={tags}
+                labels={editorLabels}
+              />
+            </label>
+          </div>
+        </section>
+
+        <section className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-[0_18px_48px_rgba(15,23,42,0.06)]">
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,0.9fr)]">
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+              <label className="space-y-2">
                 <span className="text-sm font-medium text-[var(--theme-foreground)]">
                   {translateMessage(messages, 'content.fields.status')}
                 </span>
-              <select
-                name="status"
-                defaultValue={post.status}
-                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
-              >
-                <option value="draft">
-                  {translateMessage(messages, 'content.status.draft')}
-                </option>
-                <option value="scheduled">
-                  {translateMessage(messages, 'content.status.scheduled')}
-                </option>
-                <option value="published">
-                  {translateMessage(messages, 'content.status.published')}
-                </option>
-                <option value="archived">
-                  {translateMessage(messages, 'content.status.archived')}
-                </option>
-              </select>
-            </label>
-
-            <label className="space-y-2">
-              <span className="text-sm font-medium text-[var(--theme-foreground)]">
-                {translateMessage(messages, 'content.fields.publishTime')}
-              </span>
-              <input
-                type="datetime-local"
-                name="publishedAt"
-                defaultValue={toDatetimeLocalValue(post.publishedAt)}
-                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
-              />
-            </label>
-
-            <label className="space-y-2">
-              <span className="text-sm font-medium text-[var(--theme-foreground)]">
-                {translateMessage(messages, 'content.fields.readingTime')}
-              </span>
-              <input
-                type="number"
-                min="1"
-                name="readingTimeMinutes"
-                defaultValue={post.readingTimeMinutes ?? ''}
-                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
-              />
-            </label>
-
-            <label className="space-y-2">
-              <span className="text-sm font-medium text-[var(--theme-foreground)]">
-                {translateMessage(messages, 'content.fields.category')}
-              </span>
-              <select
-                name="categoryId"
-                defaultValue={post.category?.id ?? ''}
-                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
-              >
-                <option value="">
-                  {translateMessage(messages, 'content.fields.none')}
-                </option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
+                <select
+                  name="status"
+                  defaultValue={post.status}
+                  className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
+                >
+                  <option value="draft">
+                    {translateMessage(messages, 'content.status.draft')}
                   </option>
-                ))}
-              </select>
-            </label>
-          </div>
+                  <option value="scheduled">
+                    {translateMessage(messages, 'content.status.scheduled')}
+                  </option>
+                  <option value="published">
+                    {translateMessage(messages, 'content.status.published')}
+                  </option>
+                  <option value="archived">
+                    {translateMessage(messages, 'content.status.archived')}
+                  </option>
+                </select>
+              </label>
 
-          <div className="mt-5 flex flex-wrap items-center gap-4">
-            <label className="inline-flex items-center gap-3 rounded-full border border-[var(--theme-border)] bg-white/70 px-4 py-2 text-sm text-[var(--theme-foreground)]">
-              <input
-                type="checkbox"
-                name="isFeatured"
-                defaultChecked={post.isFeatured}
-              />
-              {translateMessage(messages, 'content.fields.featured')}
-            </label>
-          </div>
+              <label className="space-y-2">
+                <span className="text-sm font-medium text-[var(--theme-foreground)]">
+                  {translateMessage(messages, 'content.fields.publishTime')}
+                </span>
+                <input
+                  type="datetime-local"
+                  name="publishedAt"
+                  defaultValue={toDatetimeLocalValue(post.publishedAt)}
+                  className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
+                />
+              </label>
 
-          <label className="mt-5 block space-y-2">
-            <span className="text-sm font-medium text-[var(--theme-foreground)]">
-              {translateMessage(messages, 'content.fields.changeSummary')}
-            </span>
-            <input
-              type="text"
-              name="changeSummary"
-              placeholder={translateMessage(
-                messages,
-                'content.fields.changeSummaryPlaceholder',
-              )}
-              className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
-            />
-          </label>
+              <label className="space-y-2">
+                <span className="text-sm font-medium text-[var(--theme-foreground)]">
+                  {translateMessage(messages, 'content.fields.readingTime')}
+                </span>
+                <input
+                  type="number"
+                  min="1"
+                  name="readingTimeMinutes"
+                  defaultValue={post.readingTimeMinutes ?? ''}
+                  className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
+                />
+              </label>
+
+              <label className="space-y-2">
+                <span className="text-sm font-medium text-[var(--theme-foreground)]">
+                  {translateMessage(messages, 'content.fields.category')}
+                </span>
+                <select
+                  name="categoryId"
+                  defaultValue={post.category?.id ?? ''}
+                  className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
+                >
+                  <option value="">
+                    {translateMessage(messages, 'content.fields.none')}
+                  </option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <div className="rounded-[1.5rem] border border-[var(--theme-border)] bg-white/70 p-4">
+              <label className="inline-flex items-center gap-3 rounded-full border border-[var(--theme-border)] bg-white px-4 py-2 text-sm text-[var(--theme-foreground)]">
+                <input
+                  type="checkbox"
+                  name="isFeatured"
+                  defaultChecked={post.isFeatured}
+                />
+                {translateMessage(messages, 'content.fields.featured')}
+              </label>
+
+              <label className="mt-4 block space-y-2">
+                <span className="text-sm font-medium text-[var(--theme-foreground)]">
+                  {translateMessage(messages, 'content.fields.changeSummary')}
+                </span>
+                <input
+                  type="text"
+                  name="changeSummary"
+                  placeholder={translateMessage(
+                    messages,
+                    'content.fields.changeSummaryPlaceholder',
+                  )}
+                  className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
+                />
+              </label>
+            </div>
+          </div>
 
           <fieldset className="mt-5 space-y-3">
             <legend className="text-sm font-medium text-[var(--theme-foreground)]">
@@ -214,143 +297,18 @@ export async function PostEditorForm({
               ))}
             </div>
           </fieldset>
-
-          <fieldset className="mt-6 space-y-3">
-            <legend className="text-sm font-medium text-[var(--theme-foreground)]">
-              {translateMessage(messages, 'content.fields.coverImage')}
-            </legend>
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              <label className="flex cursor-pointer flex-col justify-between rounded-[1.5rem] border border-[var(--theme-border)] bg-white/80 p-4 text-sm text-[var(--theme-foreground)]">
-                <span className="inline-flex items-center gap-3">
-                  <input
-                    type="radio"
-                    name="heroMediaId"
-                    value=""
-                    defaultChecked={selectedHeroMediaId === ''}
-                  />
-                  {translateMessage(messages, 'content.fields.none')}
-                </span>
-                <span className="mt-6 text-sm text-[var(--theme-muted)]">
-                  {translateMessage(messages, 'content.fields.coverImageEmpty')}
-                </span>
-              </label>
-
-              {mediaOptions.map((mediaOption) => (
-                <label
-                  key={mediaOption.id}
-                  className="flex cursor-pointer flex-col gap-3 rounded-[1.5rem] border border-[var(--theme-border)] bg-white/80 p-4 text-sm text-[var(--theme-foreground)]"
-                >
-                  <span className="inline-flex items-center gap-3">
-                    <input
-                      type="radio"
-                      name="heroMediaId"
-                      value={mediaOption.id}
-                      defaultChecked={selectedHeroMediaId === mediaOption.id}
-                    />
-                    <span className="font-medium">{mediaOption.fileName}</span>
-                  </span>
-                  <img
-                    src={mediaOption.publicUrl}
-                    alt={mediaOption.altText || mediaOption.fileName}
-                    className="h-40 w-full rounded-[1rem] object-cover"
-                  />
-                  <div className="space-y-1 text-sm text-[var(--theme-muted)]">
-                    <p>{mediaOption.altText || mediaOption.fileName}</p>
-                    {mediaOption.caption ? <p>{mediaOption.caption}</p> : null}
-                  </div>
-                </label>
-              ))}
-            </div>
-          </fieldset>
         </section>
 
-        <section className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-[0_18px_48px_rgba(15,23,42,0.06)]">
-          <div className="space-y-4">
-            <label className="block space-y-2">
-              <span className="text-sm font-medium text-[var(--theme-foreground)]">
-                {translateMessage(messages, 'content.fields.title')}
-              </span>
-              <input
-                type="text"
-                name="title"
-                defaultValue={translation.title}
-                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
-              />
-            </label>
-
-            <label className="block space-y-2">
-              <span className="text-sm font-medium text-[var(--theme-foreground)]">
-                {translateMessage(messages, 'content.fields.slug')}
-              </span>
-              <input
-                type="text"
-                name="slug"
-                defaultValue={translation.slug}
-                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
-              />
-            </label>
-
-            <label className="block space-y-2">
-              <span className="text-sm font-medium text-[var(--theme-foreground)]">
-                {translateMessage(messages, 'content.fields.excerpt')}
-              </span>
-              <textarea
-                name="excerpt"
-                defaultValue={translation.excerpt}
-                rows={3}
-                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
-              />
-            </label>
-
-            <label className="block space-y-2">
-              <span className="text-sm font-medium text-[var(--theme-foreground)]">
-                {translateMessage(messages, 'content.fields.content')}
-              </span>
-              <textarea
-                name="contentText"
-                defaultValue={translation.contentText}
-                rows={14}
-                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm leading-7 text-[var(--theme-foreground)]"
-              />
-            </label>
-
-            <div className="grid gap-4">
-              <label className="block space-y-2">
-                <span className="text-sm font-medium text-[var(--theme-foreground)]">
-                  {translateMessage(messages, 'content.fields.seoTitle')}
-                </span>
-                <input
-                  type="text"
-                  name="seoTitle"
-                  defaultValue={translation.seoTitle}
-                  className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
-                />
-              </label>
-              <label className="block space-y-2">
-                <span className="text-sm font-medium text-[var(--theme-foreground)]">
-                  {translateMessage(messages, 'content.fields.seoDescription')}
-                </span>
-                <textarea
-                  name="seoDescription"
-                  defaultValue={translation.seoDescription}
-                  rows={3}
-                  className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
-                />
-              </label>
-              <label className="block space-y-2">
-                <span className="text-sm font-medium text-[var(--theme-foreground)]">
-                  {translateMessage(messages, 'content.fields.coverAlt')}
-                </span>
-                <input
-                  type="text"
-                  name="coverAlt"
-                  defaultValue={translation.coverAlt}
-                  className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
-                />
-              </label>
-            </div>
-          </div>
-        </section>
+        <input type="hidden" name="heroMediaId" value={selectedHeroMediaId} />
+        <input type="hidden" name="slug" value={translation.slug} />
+        <input type="hidden" name="excerpt" value={translation.excerpt} />
+        <input type="hidden" name="seoTitle" value={translation.seoTitle} />
+        <input
+          type="hidden"
+          name="seoDescription"
+          value={translation.seoDescription}
+        />
+        <input type="hidden" name="coverAlt" value={translation.coverAlt} />
 
         <div className="flex flex-wrap items-center gap-3">
           <button

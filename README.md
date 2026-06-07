@@ -9,6 +9,7 @@ Next.js and Supabase blog platform with:
 - media library and cover image selection
 - admin presentation and theme controls
 - comment moderation foundation
+- TipTap-based rich-text post editing for text-first authoring
 
 ## Current Phase Status
 
@@ -43,6 +44,7 @@ Not implemented yet:
 - The site UI is bilingual.
 - Blog content storage remains translation-capable in the database.
 - The current editor does not force authors to fill both locales for every post.
+- The current TipTap rollout covers text formatting only; inline media and tables are not implemented yet.
 - Roles are `author`, `editor`, and `admin`.
 
 ## Environment Variables
@@ -185,6 +187,7 @@ To promote a user:
 - revision history
 - sample content generation
 - cover image selection from stored media
+- TipTap editor with headings, emphasis, links, quotes, code blocks, lists, and dividers
 
 ### Media
 

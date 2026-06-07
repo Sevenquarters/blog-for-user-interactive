@@ -134,9 +134,28 @@ The active theme preset is stored in Supabase and loaded into the `ThemeProvider
 
 ### Current editor behavior
 
-- one content form is shown at a time
+- one locale-specific content form is shown at a time
+- the admin editor uses TipTap for text-first structured authoring
+- stored content remains in `post_translations.content` as JSON
 - published posts need one publish-ready translation, not all translations
 - empty translation rows are pruned on save
+
+### TipTap rollout status
+
+- implemented in the current stage:
+  - headings
+  - paragraphs
+  - bold, italic, underline
+  - links
+  - blockquotes
+  - code blocks
+  - ordered and unordered lists
+  - horizontal rules
+- intentionally not implemented yet:
+  - inline image nodes
+  - inline video nodes
+  - table nodes
+  - revision diff tooling
 
 ## Media Architecture
 
