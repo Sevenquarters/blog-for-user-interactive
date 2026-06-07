@@ -30,6 +30,10 @@ export type ContentMediaOption = {
   id: string;
   fileName: string;
   publicUrl: string;
+  mimeType?: string;
+  kind?: 'image' | 'video';
+  width?: number | null;
+  height?: number | null;
   altText: string;
   caption: string;
 };

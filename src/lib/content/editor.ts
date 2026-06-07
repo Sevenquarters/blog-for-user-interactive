@@ -1,15 +1,6 @@
 import type { Locale } from '@/i18n/config';
+import { hasRenderableContent } from '@/lib/content/content-format';
 import type { PostStatus, PostTranslationEditorRecord } from '@/types/content';
-
-type SerializedContentBlock =
-  | {
-      type: 'paragraph' | 'heading';
-      text: string;
-    }
-  | {
-      type: 'list';
-      items: string[];
-    };
 
 type SampleTranslation = {
   title: string;
@@ -43,90 +34,6 @@ export function slugify(value: string) {
     .replace(/-{2,}/g, '-');
 }
 
-export function contentTextToBlocks(contentText: string) {
-  const sections = contentText
-    .split(/\n{2,}/)
-    .map((section) => section.trim())
-    .filter(Boolean);
-
-  const blocks: SerializedContentBlock[] = [];
-
-  sections.forEach((section) => {
-    if (section.startsWith('- ')) {
-      const items = section
-        .split('\n')
-        .map((line) => line.replace(/^- /, '').trim())
-        .filter(Boolean);
-
-      if (items.length > 0) {
-        blocks.push({
-          type: 'list',
-          items,
-        });
-      }
-
-      return;
-    }
-
-    if (section.startsWith('# ')) {
-      blocks.push({
-        type: 'heading',
-        text: section.replace(/^# /, '').trim(),
-      });
-
-      return;
-    }
-
-    blocks.push({
-      type: 'paragraph',
-      text: section,
-    });
-  });
-
-  return blocks;
-}
-
-export function blocksToContentText(content: unknown) {
-  if (typeof content === 'string') {
-    return content;
-  }
-
-  if (!Array.isArray(content)) {
-    return '';
-  }
-
-  return content
-    .map((block) => {
-      if (typeof block === 'string') {
-        return block;
-      }
-
-      if (typeof block !== 'object' || block === null) {
-        return '';
-      }
-
-      const blockRecord = block as {
-        type?: unknown;
-        text?: unknown;
-        items?: unknown[];
-      };
-
-      if (blockRecord.type === 'list' && Array.isArray(blockRecord.items)) {
-        return blockRecord.items.map((item) => `- ${String(item)}`).join('\n');
-      }
-
-      if (typeof blockRecord.text === 'string') {
-        return blockRecord.type === 'heading'
-          ? `# ${blockRecord.text}`
-          : blockRecord.text;
-      }
-
-      return '';
-    })
-    .filter(Boolean)
-    .join('\n\n');
-}
-
 export function buildDefaultTranslation(
   locale: Locale,
 ): PostTranslationEditorRecord {
@@ -149,7 +56,7 @@ export function isTranslationComplete(
   return Boolean(
     translation.title.trim() &&
       translation.slug.trim() &&
-      translation.contentText.trim(),
+      hasRenderableContent(translation.contentText),
   );
 }
 

@@ -6,10 +6,12 @@ import { getSupabaseStoragePublicUrl } from '@/lib/supabase/public';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import type { Locale } from '@/i18n/config';
 import {
+  contentToTextareaText,
+  textareaTextToTipTapDoc,
+} from '@/lib/content/content-format';
+import {
   SAMPLE_POST_DEFINITIONS,
-  blocksToContentText,
   buildDefaultTranslation,
-  contentTextToBlocks,
   isTranslationComplete,
   resolvePublishedAt,
   slugify,
@@ -63,6 +65,9 @@ type RawManageablePostRow = {
         bucket_name: string;
         storage_path: string;
         file_name: string;
+        mime_type?: string | null;
+        width?: number | null;
+        height?: number | null;
         media_asset_translations:
           | Array<{
               locale: string;
@@ -127,6 +132,9 @@ const MANAGEABLE_POST_SELECT = `
     bucket_name,
     storage_path,
     file_name,
+    mime_type,
+    width,
+    height,
     media_asset_translations (
       locale,
       alt_text,
@@ -258,6 +266,10 @@ function mapHeroMedia(
       mediaAsset.bucket_name,
       mediaAsset.storage_path,
     ),
+    mimeType: mediaAsset.mime_type ?? 'image/jpeg',
+    kind: mediaAsset.mime_type?.startsWith('video/') ? 'video' : 'image',
+    width: mediaAsset.width ?? null,
+    height: mediaAsset.height ?? null,
     altText: translation?.alt_text ?? '',
     caption: translation?.caption ?? '',
   };
@@ -276,7 +288,7 @@ function mapEditorTranslation(
     title: translation.title,
     slug: translation.slug,
     excerpt: translation.excerpt ?? '',
-    contentText: blocksToContentText(translation.content),
+    contentText: contentToTextareaText(translation.content),
     seoTitle: translation.seo_title ?? '',
     seoDescription: translation.seo_description ?? '',
     coverAlt: translation.cover_alt ?? '',
@@ -402,14 +414,15 @@ function buildSavedTranslation(
   const normalizedSlug = (
     translation.slug.trim() || slugify(normalizedTitle)
   ).trim();
-  const contentText = translation.contentText.trim();
+  const normalizedContentText = translation.contentText.trim();
+  const content = textareaTextToTipTapDoc(normalizedContentText);
 
   return {
     locale: translation.locale,
     title: normalizedTitle,
     slug: normalizedSlug,
     excerpt: translation.excerpt.trim() || null,
-    content: contentTextToBlocks(contentText),
+    content,
     seo_title: translation.seoTitle.trim() || null,
     seo_description: translation.seoDescription.trim() || null,
     cover_alt: translation.coverAlt.trim() || null,
@@ -417,7 +430,7 @@ function buildSavedTranslation(
       title: normalizedTitle,
       slug: normalizedSlug,
       excerpt: translation.excerpt,
-      contentText,
+      contentText: normalizedContentText,
       seoTitle: translation.seoTitle,
       seoDescription: translation.seoDescription,
       coverAlt: translation.coverAlt,

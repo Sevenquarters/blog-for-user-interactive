@@ -6,6 +6,7 @@ import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import type { Locale } from '@/i18n/config';
 import { buildLocalePath } from '@/lib/auth/paths';
 import { requireUser } from '@/lib/auth/session';
+import { hasRenderableContent } from '@/lib/content/content-format';
 import {
   createEmptyPostEditor,
   deleteManageablePost,
@@ -13,7 +14,12 @@ import {
   getManageablePostEditorRecord,
   saveManageablePost,
 } from '@/lib/db/content-posts';
-import { parsePositiveInteger, resolvePublishedAt, slugify } from '@/lib/content/editor';
+import {
+  parsePositiveInteger,
+  resolvePublishedAt,
+  buildDefaultTranslation,
+  slugify,
+} from '@/lib/content/editor';
 import type { PostStatus, PostTranslationEditorRecord } from '@/types/content';
 
 const ALLOWED_STATUSES: PostStatus[] = [
@@ -48,13 +54,14 @@ function readTranslation(
   locale: 'en' | 'zh-CN',
 ): PostTranslationEditorRecord {
   const title = readTrimmedValue(formData, 'title');
+  const contentText = String(formData.get('contentText') ?? '').trim();
 
   return {
     locale,
     title,
     slug: readTrimmedValue(formData, 'slug') || slugify(title),
     excerpt: readTrimmedValue(formData, 'excerpt'),
-    contentText: readTrimmedValue(formData, 'contentText'),
+    contentText,
     seoTitle: readTrimmedValue(formData, 'seoTitle'),
     seoDescription: readTrimmedValue(formData, 'seoDescription'),
     coverAlt: readTrimmedValue(formData, 'coverAlt'),
@@ -66,7 +73,7 @@ function isTranslationPublishReady(translation: PostTranslationEditorRecord) {
   return Boolean(
     translation.title.trim() &&
       translation.slug.trim() &&
-      translation.contentText.trim(),
+      hasRenderableContent(translation.contentText),
   );
 }
 
@@ -140,28 +147,8 @@ export async function savePostAction(
 
   let existingPostAuthorId = user.id;
   let translations: Record<'en' | 'zh-CN', PostTranslationEditorRecord> = {
-    en: {
-      locale: 'en',
-      title: '',
-      slug: '',
-      excerpt: '',
-      contentText: '',
-      seoTitle: '',
-      seoDescription: '',
-      coverAlt: '',
-      isComplete: false,
-    },
-    'zh-CN': {
-      locale: 'zh-CN',
-      title: '',
-      slug: '',
-      excerpt: '',
-      contentText: '',
-      seoTitle: '',
-      seoDescription: '',
-      coverAlt: '',
-      isComplete: false,
-    },
+    en: buildDefaultTranslation('en'),
+    'zh-CN': buildDefaultTranslation('zh-CN'),
   };
 
   if (postId) {
