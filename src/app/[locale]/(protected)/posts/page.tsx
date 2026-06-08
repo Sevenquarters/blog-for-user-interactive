@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { ContentFlashMessage } from '@/components/content/content-flash-message';
 import { PostStatusBadge } from '@/components/content/post-status-badge';
+import { Badge, Button, Card, buttonClassName, cardClassName } from '@/components/ui';
 import { isSupportedLocale } from '@/i18n/config';
 import { getMessages } from '@/i18n/dictionaries';
 import { translateMessage } from '@/i18n/messages';
@@ -75,7 +76,7 @@ export default async function PostsPage({
 
   return (
     <section className="w-full space-y-6">
-      <div className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-8 shadow-[0_30px_80px_rgba(15,23,42,0.08)]">
+      <Card tone="hero" className="p-8">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="text-sm font-semibold tracking-[0.24em] text-[var(--theme-accent)] uppercase">
@@ -96,22 +97,19 @@ export default async function PostsPage({
 
           <div className="flex flex-wrap gap-3">
             <form action={demoAction}>
-              <button
-                type="submit"
-                className="rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface)] px-5 py-3 text-sm font-semibold text-[var(--theme-foreground)]"
-              >
+              <Button type="submit" variant="secondary" size="lg">
                 {translateMessage(messages, 'content.generateDemo')}
-              </button>
+              </Button>
             </form>
             <Link
               href={buildLocalePath(locale, '/posts/new')}
-              className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--theme-accent)] px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_38px_rgba(194,65,12,0.3)] transition hover:-translate-y-0.5"
+              className={buttonClassName({ variant: 'primary', size: 'lg' })}
             >
               {translateMessage(messages, 'content.newPost')}
             </Link>
           </div>
         </div>
-      </div>
+      </Card>
 
       {successPath ? (
         <ContentFlashMessage
@@ -127,15 +125,16 @@ export default async function PostsPage({
       ) : null}
 
       {posts.length === 0 ? (
-        <div className="rounded-[2rem] border border-dashed border-[var(--theme-border)] bg-[var(--theme-surface)] p-8 text-base leading-8 text-[var(--theme-muted)]">
+        <div className={cardClassName({ tone: 'dashed', className: 'p-8 text-base leading-8 text-[var(--theme-muted)]' })}>
           {translateMessage(messages, 'content.emptyState')}
         </div>
       ) : (
         <div className="grid gap-5">
           {posts.map((post) => (
-            <article
+            <Card
               key={post.id}
-              className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-[0_18px_48px_rgba(15,23,42,0.06)]"
+              as="article"
+              className="p-6"
             >
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="space-y-3">
@@ -165,29 +164,26 @@ export default async function PostsPage({
 
                   <div className="flex flex-wrap gap-2">
                     {post.category ? (
-                      <span className="rounded-full bg-white/70 px-3 py-1 text-sm text-[var(--theme-muted)]">
+                      <Badge>
                         {post.category.name}
-                      </span>
+                      </Badge>
                     ) : null}
                     {post.tags.map((tag) => (
-                      <span
-                        key={tag.id}
-                        className="rounded-full bg-white/70 px-3 py-1 text-sm text-[var(--theme-muted)]"
-                      >
+                      <Badge key={tag.id}>
                         #{tag.name}
-                      </span>
+                      </Badge>
                     ))}
                   </div>
                 </div>
 
                 <Link
                   href={buildLocalePath(locale, `/posts/${post.id}`)}
-                  className="rounded-full border border-[var(--theme-border)] px-4 py-2 text-sm font-semibold text-[var(--theme-foreground)]"
+                  className={buttonClassName({ variant: 'secondary', size: 'sm' })}
                 >
                   {translateMessage(messages, 'content.editPost')}
                 </Link>
               </div>
-            </article>
+            </Card>
           ))}
         </div>
       )}

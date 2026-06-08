@@ -3,6 +3,7 @@
 import { useTheme } from '@/providers/theme-provider';
 import { useTranslations } from '@/providers/locale-provider';
 import type { ThemeMode } from '@/types/theme';
+import { Button } from '@/components/ui';
 
 const THEME_ORDER: ThemeMode[] = ['system', 'light', 'dark'];
 
@@ -14,12 +15,8 @@ export function ThemeToggle() {
     THEME_ORDER[(THEME_ORDER.indexOf(mode) + 1) % THEME_ORDER.length];
 
   return (
-    <button
-      type="button"
-      onClick={() => setMode(nextMode)}
-      className="rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface)] px-4 py-2 text-sm font-medium text-[var(--theme-foreground)] shadow-sm transition hover:-translate-y-0.5"
-    >
+    <Button type="button" variant="secondary" size="md" onClick={() => setMode(nextMode)}>
       {t('theme.label')}: {t(`theme.${mode}`)}
-    </button>
+    </Button>
   );
 }

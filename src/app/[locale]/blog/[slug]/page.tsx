@@ -2,14 +2,25 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 
+import { BackToTopButton } from '@/components/public/back-to-top-button';
+import { PostComments } from '@/components/public/post-comments';
 import { PostContent } from '@/components/public/post-content';
+import { PostAuthorCard } from '@/components/public/post-author-card';
+import { PostReaderActions } from '@/components/public/post-reader-actions';
 import { PostCard } from '@/components/public/post-card';
+import { PostReaderStats } from '@/components/public/post-reader-stats';
+import { PostTableOfContents } from '@/components/public/post-table-of-contents';
 import { PostViewTracker } from '@/components/public/post-view-tracker';
+import { ReadingProgressBar } from '@/components/public/reading-progress-bar';
+import { Card, badgeClassName, cn } from '@/components/ui';
 import { isSupportedLocale, type Locale } from '@/i18n/config';
 import { getMessages } from '@/i18n/dictionaries';
 import { translateMessage } from '@/i18n/messages';
 import { buildLocalePath } from '@/lib/auth/paths';
+import { analyzeContent } from '@/lib/content/content-analysis';
+import { listApprovedCommentsForPost } from '@/lib/db/comments';
 import {
+  getPublicPostViewCount,
   getPublicSiteSettings,
   listPublishedPosts,
   resolvePublishedPost,
@@ -92,78 +103,199 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
       limit: 2,
     })
   ).slice(0, 2);
+  const contentAnalysis = analyzeContent(post.content);
+  const [viewCount, comments] = await Promise.all([
+    getPublicPostViewCount(post.id),
+    listApprovedCommentsForPost(locale, post.id),
+  ]);
+  const computedReadingTime = Math.max(
+    post.readingTimeMinutes ?? 0,
+    contentAnalysis.estimatedReadingTimeMinutes,
+  );
+  const readerCopy =
+    locale === 'zh-CN'
+      ? {
+          tableOfContents: '目录',
+          readingStats: '阅读信息',
+          wordCount: '字数',
+          readingTime: '阅读时长',
+          published: '发布于',
+          author: '作者',
+          authorBio:
+            '关注产品设计、内容系统与稳定可持续的写作体验，分享双语内容平台的构建过程。',
+          backToTop: '回到顶部',
+          views: '阅读量',
+          readerActions: '稍后再读',
+          like: '喜欢',
+          liked: '已喜欢',
+          bookmark: '收藏',
+          bookmarked: '已收藏',
+          comments: '讨论',
+          commentsEmpty: '这篇文章暂时还没有公开评论，不过评论区的阅读体验已经准备好了。',
+          replyingTo: '回复',
+        }
+      : {
+          tableOfContents: 'Table of contents',
+          readingStats: 'Reading stats',
+          wordCount: 'Words',
+          readingTime: 'Reading time',
+          published: 'Published',
+          author: 'Author',
+          authorBio:
+            'Writes about product design, content systems, and sustainable publishing workflows for thoughtful online writing.',
+          backToTop: 'Back to top',
+          views: 'Views',
+          readerActions: 'Save this story',
+          like: 'Like',
+          liked: 'Liked',
+          bookmark: 'Bookmark',
+          bookmarked: 'Saved',
+          comments: 'Discussion',
+          commentsEmpty:
+            'Comments have not been published for this article yet, but the thread layout is ready for reader conversations.',
+          replyingTo: 'Replying to',
+        };
+  const authorName =
+    post.author?.displayName?.trim() ||
+    (locale === 'zh-CN' ? '编辑团队' : 'Editorial team');
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-8">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
       <PostViewTracker locale={locale} postId={post.id} />
+      <ReadingProgressBar />
+      <BackToTopButton label={readerCopy.backToTop} />
 
-      <article className="overflow-hidden rounded-[2.5rem] border border-[var(--theme-border)] bg-[linear-gradient(180deg,_rgba(255,255,255,0.94),_rgba(255,247,237,0.9)_100%)] shadow-[0_32px_90px_rgba(15,23,42,0.1)]">
-        <div className="border-b border-[var(--theme-border)] px-7 py-8 sm:px-10 sm:py-10">
-          <div className="flex flex-wrap items-center gap-3 text-sm text-[var(--theme-muted)]">
-            <Link
-              href={buildLocalePath(locale, '/blog')}
-              className="font-medium text-[var(--theme-accent)]"
-            >
-              {translateMessage(messages, 'blog.backToBlog')}
-            </Link>
-            <span>|</span>
-            <span>{formatPublishedDate(locale, post.publishedAt)}</span>
-            {post.readingTimeMinutes ? (
-              <>
-                <span>|</span>
-                <span>
-                  {translateMessage(messages, 'blog.readingTime').replace(
-                    '{minutes}',
-                    String(post.readingTimeMinutes),
-                  )}
-                </span>
-              </>
+      <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_19rem]">
+        <Card
+          as="article"
+          tone="elevated"
+          className="overflow-hidden rounded-[2.5rem] bg-[linear-gradient(180deg,_rgba(255,255,255,0.94),_rgba(255,247,237,0.9)_100%)]"
+        >
+          <div className="border-b border-[var(--theme-border)] px-6 py-8 sm:px-10 sm:py-10">
+            <div className="flex flex-wrap items-center gap-3 text-sm text-[var(--theme-muted)]">
+              <Link
+                href={buildLocalePath(locale, '/blog')}
+                className="font-medium text-[var(--theme-accent)]"
+              >
+                {translateMessage(messages, 'blog.backToBlog')}
+              </Link>
+              <span>|</span>
+              <span>
+                {readerCopy.published} {formatPublishedDate(locale, post.publishedAt)}
+              </span>
+              <span>|</span>
+              <span>
+                {translateMessage(messages, 'blog.readingTime').replace(
+                  '{minutes}',
+                  String(computedReadingTime),
+                )}
+              </span>
+            </div>
+
+            {post.category ? (
+              <Link
+                href={buildLocalePath(
+                  locale,
+                  `/category/${encodeURIComponent(post.category.slug)}`,
+                )}
+                className={cn(
+                  badgeClassName('outline'),
+                  'mt-6 inline-flex text-xs font-semibold tracking-[0.18em] uppercase transition hover:border-[var(--theme-accent)] hover:text-[var(--theme-accent)]',
+                )}
+              >
+                {post.category.name}
+              </Link>
+            ) : null}
+
+            <h1 className="mt-5 text-4xl font-semibold tracking-tight text-[var(--theme-foreground)] sm:text-5xl">
+              {post.title}
+            </h1>
+            {post.excerpt ? (
+              <p className="mt-5 max-w-3xl text-xl leading-9 text-[var(--theme-muted)]">
+                {post.excerpt}
+              </p>
             ) : null}
           </div>
 
-          {post.category ? (
-            <Link
-              href={buildLocalePath(
-                locale,
-                `/category/${encodeURIComponent(post.category.slug)}`,
-              )}
-              className="mt-6 inline-flex rounded-full border border-[var(--theme-border)] px-3 py-1 text-xs font-semibold tracking-[0.18em] text-[var(--theme-muted)] uppercase transition hover:border-[var(--theme-accent)] hover:text-[var(--theme-accent)]"
-            >
-              {post.category.name}
-            </Link>
-          ) : null}
+          <div className="px-6 py-8 sm:px-10 sm:py-10">
+            <PostContent content={post.content} />
 
-          <h1 className="mt-5 text-4xl font-semibold tracking-tight text-[var(--theme-foreground)] sm:text-5xl">
-            {post.title}
-          </h1>
-          {post.excerpt ? (
-            <p className="mt-5 max-w-3xl text-xl leading-9 text-[var(--theme-muted)]">
-              {post.excerpt}
-            </p>
-          ) : null}
-        </div>
+            {post.tags.length > 0 ? (
+              <div className="mt-10 flex flex-wrap gap-3 border-t border-[var(--theme-border)] pt-8">
+                {post.tags.map((tag) => (
+                  <Link
+                    key={tag.id}
+                    href={buildLocalePath(
+                      locale,
+                      `/tag/${encodeURIComponent(tag.slug)}`,
+                    )}
+                    className="rounded-full bg-white/80 px-4 py-2 text-sm text-[var(--theme-muted)] transition hover:-translate-y-0.5 hover:text-[var(--theme-foreground)]"
+                  >
+                    #{tag.name}
+                  </Link>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        </Card>
 
-        <div className="px-7 py-8 sm:px-10 sm:py-10">
-          <PostContent content={post.content} />
+        <aside className="space-y-5 xl:sticky xl:top-28 xl:self-start">
+          <PostReaderStats
+            title={readerCopy.readingStats}
+            items={[
+              {
+                label: readerCopy.wordCount,
+                value:
+                  locale === 'zh-CN'
+                    ? `${contentAnalysis.wordCount} 字`
+                    : `${contentAnalysis.wordCount}`,
+              },
+              {
+                label: readerCopy.readingTime,
+                value:
+                  locale === 'zh-CN'
+                    ? `${computedReadingTime} 分钟`
+                    : `${computedReadingTime} min`,
+              },
+              ...(viewCount !== null
+                ? [
+                    {
+                      label: readerCopy.views,
+                      value: locale === 'zh-CN' ? `${viewCount} 次` : `${viewCount}`,
+                    },
+                  ]
+                : []),
+            ]}
+          />
+          <PostTableOfContents
+            title={readerCopy.tableOfContents}
+            headings={contentAnalysis.headings}
+          />
+          <PostReaderActions
+            postId={post.id}
+            locale={locale}
+            labels={{
+              title: readerCopy.readerActions,
+              like: readerCopy.like,
+              liked: readerCopy.liked,
+              bookmark: readerCopy.bookmark,
+              bookmarked: readerCopy.bookmarked,
+            }}
+          />
+          <PostAuthorCard
+            eyebrow={readerCopy.author}
+            name={authorName}
+            bio={readerCopy.authorBio}
+          />
+        </aside>
+      </div>
 
-          {post.tags.length > 0 ? (
-            <div className="mt-10 flex flex-wrap gap-3 border-t border-[var(--theme-border)] pt-8">
-              {post.tags.map((tag) => (
-                <Link
-                  key={tag.id}
-                  href={buildLocalePath(
-                    locale,
-                    `/tag/${encodeURIComponent(tag.slug)}`,
-                  )}
-                  className="rounded-full bg-white/80 px-4 py-2 text-sm text-[var(--theme-muted)] transition hover:text-[var(--theme-foreground)]"
-                >
-                  #{tag.name}
-                </Link>
-              ))}
-            </div>
-          ) : null}
-        </div>
-      </article>
+      <PostComments
+        title={readerCopy.comments}
+        emptyState={readerCopy.commentsEmpty}
+        replyLabel={readerCopy.replyingTo}
+        comments={comments}
+      />
 
       {relatedPosts.length > 0 ? (
         <section className="space-y-5">

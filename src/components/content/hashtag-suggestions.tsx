@@ -1,6 +1,7 @@
 'use client';
 
 import type { ContentTagOption } from '@/types/content';
+import { Badge } from '@/components/ui';
 
 type HashtagSuggestionsProps = {
   open: boolean;
@@ -46,7 +47,9 @@ export function HashtagSuggestions({
             <span className="font-medium text-[var(--theme-foreground)]">
               #{tag.name}
             </span>
-            <span className="text-xs text-[var(--theme-muted)]">{tag.slug}</span>
+            <Badge variant="outline" className="text-xs">
+              {tag.slug}
+            </Badge>
           </button>
         ))}
       </div>

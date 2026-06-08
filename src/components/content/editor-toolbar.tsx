@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 
 import type { Editor } from '@tiptap/react';
+import { Button, cn } from '@/components/ui';
 
 export type EditorToolbarLabels = {
   paragraph: string;
@@ -53,12 +54,10 @@ type EditorToolbarProps = {
 };
 
 function getButtonClassName(isActive: boolean) {
-  return [
-    'rounded-full border px-3 py-2 text-xs font-semibold tracking-[0.08em] transition',
-    isActive
-      ? 'border-[var(--theme-accent)] bg-[var(--theme-accent)] text-white shadow-[0_12px_24px_rgba(194,65,12,0.18)]'
-      : 'border-[var(--theme-border)] bg-white/90 text-[var(--theme-foreground)] hover:border-[var(--theme-accent)] hover:text-[var(--theme-accent)]',
-  ].join(' ');
+  return cn(
+    'min-h-10 rounded-full px-3 py-2 text-xs font-semibold tracking-[0.08em]',
+    isActive ? '' : '',
+  );
 }
 
 function ToolbarButton({
@@ -71,20 +70,22 @@ function ToolbarButton({
   onClick: () => void;
 }) {
   return (
-    <button
+    <Button
       type="button"
       aria-pressed={active}
+      variant={active ? 'primary' : 'secondary'}
+      size="sm"
       className={getButtonClassName(active)}
       onClick={onClick}
     >
       {label}
-    </button>
+    </Button>
   );
 }
 
 function ToolbarGroup({ children }: { children: ReactNode }) {
   return (
-    <div className="flex flex-wrap gap-2 rounded-[1.4rem] border border-[var(--theme-border)] bg-[rgba(255,255,255,0.7)] p-2">
+    <div className="flex flex-wrap gap-2 rounded-[1.4rem] border border-[var(--theme-border)] bg-[rgba(255,255,255,0.74)] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]">
       {children}
     </div>
   );

@@ -1,4 +1,5 @@
 import type { PostStatus } from '@/types/content';
+import { Badge } from '@/components/ui';
 
 type PostStatusBadgeProps = {
   label: string;
@@ -14,10 +15,10 @@ const STATUS_STYLES: Record<PostStatus, string> = {
 
 export function PostStatusBadge({ label, status }: PostStatusBadgeProps) {
   return (
-    <span
-      className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] ${STATUS_STYLES[status]}`}
+    <Badge
+      className={`text-xs font-semibold uppercase tracking-[0.16em] ${STATUS_STYLES[status]}`}
     >
       {label}
-    </span>
+    </Badge>
   );
 }

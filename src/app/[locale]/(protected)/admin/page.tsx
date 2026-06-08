@@ -1,4 +1,5 @@
 import { ContentFlashMessage } from '@/components/content/content-flash-message';
+import { Badge, Button, Card, Input, Select, Textarea } from '@/components/ui';
 import { requireRole } from '@/lib/auth/session';
 import {
   activateThemeAction,
@@ -56,7 +57,7 @@ export default async function AdminPage({
 
   return (
     <section className="w-full space-y-6">
-      <div className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-8 shadow-[0_30px_80px_rgba(15,23,42,0.08)]">
+      <Card tone="hero" className="p-8">
         <p className="text-sm font-semibold tracking-[0.24em] text-[var(--theme-accent)] uppercase">
           {translateMessage(messages, 'admin.eyebrow')}
         </p>
@@ -66,7 +67,7 @@ export default async function AdminPage({
         <p className="mt-3 max-w-3xl text-base leading-7 text-[var(--theme-muted)]">
           {translateMessage(messages, 'admin.description')}
         </p>
-      </div>
+      </Card>
 
       {successPath ? (
         <ContentFlashMessage
@@ -82,41 +83,41 @@ export default async function AdminPage({
       ) : null}
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <article className="rounded-[1.5rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-5 shadow-[0_18px_48px_rgba(15,23,42,0.06)]">
+        <Card as="article" className="rounded-[1.5rem] p-5">
           <p className="text-sm text-[var(--theme-muted)]">
             {translateMessage(messages, 'admin.currentRoleLabel')}
           </p>
           <p className="mt-3 text-xl font-semibold text-[var(--theme-foreground)]">
             {translateMessage(messages, `roles.${profile.role}`)}
           </p>
-        </article>
-        <article className="rounded-[1.5rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-5 shadow-[0_18px_48px_rgba(15,23,42,0.06)]">
+        </Card>
+        <Card as="article" className="rounded-[1.5rem] p-5">
           <p className="text-sm text-[var(--theme-muted)]">
             {translateMessage(messages, 'admin.siteNameLabel')}
           </p>
           <p className="mt-3 text-xl font-semibold text-[var(--theme-foreground)]">
             {siteSettings.translations[locale].siteName || '-'}
           </p>
-        </article>
-        <article className="rounded-[1.5rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-5 shadow-[0_18px_48px_rgba(15,23,42,0.06)]">
+        </Card>
+        <Card as="article" className="rounded-[1.5rem] p-5">
           <p className="text-sm text-[var(--theme-muted)]">
             {translateMessage(messages, 'admin.defaultLocaleLabel')}
           </p>
           <p className="mt-3 text-xl font-semibold text-[var(--theme-foreground)]">
             {siteSettings.defaultLocale}
           </p>
-        </article>
-        <article className="rounded-[1.5rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-5 shadow-[0_18px_48px_rgba(15,23,42,0.06)]">
+        </Card>
+        <Card as="article" className="rounded-[1.5rem] p-5">
           <p className="text-sm text-[var(--theme-muted)]">
             {translateMessage(messages, 'admin.activeThemeLabel')}
           </p>
           <p className="mt-3 text-xl font-semibold text-[var(--theme-foreground)]">
             {themes.find((theme) => theme.record.is_active)?.record.name ?? '-'}
           </p>
-        </article>
+        </Card>
       </div>
 
-      <section className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-[0_18px_48px_rgba(15,23,42,0.06)]">
+      <Card className="p-6">
         <h2 className="text-2xl font-semibold text-[var(--theme-foreground)]">
           {translateMessage(messages, 'admin.settingsTitle')}
         </h2>
@@ -126,99 +127,89 @@ export default async function AdminPage({
               <span className="text-sm font-medium text-[var(--theme-foreground)]">
                 {translateMessage(messages, 'admin.siteNameEnLabel')}
               </span>
-              <input
+              <Input
                 type="text"
                 name="siteNameEn"
                 defaultValue={siteSettings.translations.en.siteName}
-                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
               />
             </label>
             <label className="space-y-2">
               <span className="text-sm font-medium text-[var(--theme-foreground)]">
                 {translateMessage(messages, 'admin.siteNameZhCnLabel')}
               </span>
-              <input
+              <Input
                 type="text"
                 name="siteNameZhCn"
                 defaultValue={siteSettings.translations['zh-CN'].siteName}
-                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
               />
             </label>
             <label className="space-y-2">
               <span className="text-sm font-medium text-[var(--theme-foreground)]">
                 {translateMessage(messages, 'admin.siteDescriptionEnLabel')}
               </span>
-              <textarea
+              <Textarea
                 name="siteDescriptionEn"
                 rows={3}
                 defaultValue={siteSettings.translations.en.siteDescription}
-                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
               />
             </label>
             <label className="space-y-2">
               <span className="text-sm font-medium text-[var(--theme-foreground)]">
                 {translateMessage(messages, 'admin.siteDescriptionZhCnLabel')}
               </span>
-              <textarea
+              <Textarea
                 name="siteDescriptionZhCn"
                 rows={3}
                 defaultValue={siteSettings.translations['zh-CN'].siteDescription}
-                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
               />
             </label>
             <label className="space-y-2">
               <span className="text-sm font-medium text-[var(--theme-foreground)]">
                 {translateMessage(messages, 'admin.postsPerPageSettingLabel')}
               </span>
-              <input
+              <Input
                 type="number"
                 min="1"
                 name="postsPerPage"
                 defaultValue={siteSettings.postsPerPage}
-                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
               />
             </label>
             <label className="space-y-2">
               <span className="text-sm font-medium text-[var(--theme-foreground)]">
                 {translateMessage(messages, 'admin.defaultLocaleSettingLabel')}
               </span>
-              <select
+              <Select
                 name="defaultLocale"
                 defaultValue={siteSettings.defaultLocale}
-                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
               >
                 <option value="en">en</option>
                 <option value="zh-CN">zh-CN</option>
-              </select>
+              </Select>
             </label>
             <label className="space-y-2">
               <span className="text-sm font-medium text-[var(--theme-foreground)]">
                 {translateMessage(messages, 'admin.activeThemeSettingLabel')}
               </span>
-              <select
+              <Select
                 name="activeThemeId"
                 defaultValue={siteSettings.activeThemeId ?? ''}
-                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
               >
                 {themes.map((theme) => (
                   <option key={theme.record.id} value={theme.record.id}>
                     {theme.record.name}
                   </option>
                 ))}
-              </select>
+              </Select>
             </label>
           </div>
 
           <div>
-            <button
-              type="submit"
-              className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--theme-accent)] px-6 py-3 text-sm font-semibold text-white shadow-[0_16px_38px_rgba(194,65,12,0.3)] transition hover:-translate-y-0.5"
-            >
+            <Button type="submit" variant="primary" size="lg">
               {translateMessage(messages, 'admin.saveSettingsButton')}
-            </button>
+            </Button>
           </div>
         </form>
-      </section>
+      </Card>
 
       <section className="space-y-5">
         <h2 className="text-2xl font-semibold text-[var(--theme-foreground)]">
@@ -238,9 +229,10 @@ export default async function AdminPage({
             );
 
             return (
-              <article
+              <Card
                 key={theme.record.id}
-                className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-[0_18px_48px_rgba(15,23,42,0.06)]"
+                as="article"
+                className="p-6"
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
@@ -252,17 +244,14 @@ export default async function AdminPage({
                     </p>
                   </div>
                   {theme.record.is_active ? (
-                    <span className="rounded-full bg-[rgba(194,65,12,0.12)] px-4 py-2 text-sm font-medium text-[var(--theme-accent)]">
+                    <Badge variant="accent" className="px-4 py-2">
                       {translateMessage(messages, 'admin.activeThemeBadge')}
-                    </span>
+                    </Badge>
                   ) : (
                     <form action={activateCurrentTheme}>
-                      <button
-                        type="submit"
-                        className="rounded-full border border-[var(--theme-border)] px-4 py-2 text-sm font-medium text-[var(--theme-foreground)]"
-                      >
+                      <Button type="submit" variant="secondary" size="sm">
                         {translateMessage(messages, 'admin.activateThemeButton')}
-                      </button>
+                      </Button>
                     </form>
                   )}
                 </div>
@@ -333,66 +322,60 @@ export default async function AdminPage({
                           <span className="text-sm font-medium text-[var(--theme-foreground)]">
                             {translateMessage(messages, 'admin.tokenLabels.background')}
                           </span>
-                          <input
+                          <Input
                             type="text"
                             name="backgroundLight"
                             defaultValue={theme.definition.tokens.background}
-                            className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                           />
                         </label>
                         <label className="space-y-2">
                           <span className="text-sm font-medium text-[var(--theme-foreground)]">
                             {translateMessage(messages, 'admin.tokenLabels.surface')}
                           </span>
-                          <input
+                          <Input
                             type="text"
                             name="surfaceLight"
                             defaultValue={theme.definition.tokens.surface}
-                            className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                           />
                         </label>
                         <label className="space-y-2">
                           <span className="text-sm font-medium text-[var(--theme-foreground)]">
                             {translateMessage(messages, 'admin.tokenLabels.foreground')}
                           </span>
-                          <input
+                          <Input
                             type="text"
                             name="foregroundLight"
                             defaultValue={theme.definition.tokens.foreground}
-                            className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                           />
                         </label>
                         <label className="space-y-2">
                           <span className="text-sm font-medium text-[var(--theme-foreground)]">
                             {translateMessage(messages, 'admin.tokenLabels.muted')}
                           </span>
-                          <input
+                          <Input
                             type="text"
                             name="mutedLight"
                             defaultValue={theme.definition.tokens.muted}
-                            className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                           />
                         </label>
                         <label className="space-y-2">
                           <span className="text-sm font-medium text-[var(--theme-foreground)]">
                             {translateMessage(messages, 'admin.tokenLabels.accent')}
                           </span>
-                          <input
+                          <Input
                             type="text"
                             name="accentLight"
                             defaultValue={theme.definition.tokens.accent}
-                            className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                           />
                         </label>
                         <label className="space-y-2">
                           <span className="text-sm font-medium text-[var(--theme-foreground)]">
                             {translateMessage(messages, 'admin.tokenLabels.border')}
                           </span>
-                          <input
+                          <Input
                             type="text"
                             name="borderLight"
                             defaultValue={theme.definition.tokens.border}
-                            className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                           />
                         </label>
                       </div>
@@ -407,66 +390,60 @@ export default async function AdminPage({
                           <span className="text-sm font-medium text-[var(--theme-foreground)]">
                             {translateMessage(messages, 'admin.tokenLabels.background')}
                           </span>
-                          <input
+                          <Input
                             type="text"
                             name="backgroundDark"
                             defaultValue={theme.definition.darkTokens.background}
-                            className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                           />
                         </label>
                         <label className="space-y-2">
                           <span className="text-sm font-medium text-[var(--theme-foreground)]">
                             {translateMessage(messages, 'admin.tokenLabels.surface')}
                           </span>
-                          <input
+                          <Input
                             type="text"
                             name="surfaceDark"
                             defaultValue={theme.definition.darkTokens.surface}
-                            className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                           />
                         </label>
                         <label className="space-y-2">
                           <span className="text-sm font-medium text-[var(--theme-foreground)]">
                             {translateMessage(messages, 'admin.tokenLabels.foreground')}
                           </span>
-                          <input
+                          <Input
                             type="text"
                             name="foregroundDark"
                             defaultValue={theme.definition.darkTokens.foreground}
-                            className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                           />
                         </label>
                         <label className="space-y-2">
                           <span className="text-sm font-medium text-[var(--theme-foreground)]">
                             {translateMessage(messages, 'admin.tokenLabels.muted')}
                           </span>
-                          <input
+                          <Input
                             type="text"
                             name="mutedDark"
                             defaultValue={theme.definition.darkTokens.muted}
-                            className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                           />
                         </label>
                         <label className="space-y-2">
                           <span className="text-sm font-medium text-[var(--theme-foreground)]">
                             {translateMessage(messages, 'admin.tokenLabels.accent')}
                           </span>
-                          <input
+                          <Input
                             type="text"
                             name="accentDark"
                             defaultValue={theme.definition.darkTokens.accent}
-                            className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                           />
                         </label>
                         <label className="space-y-2">
                           <span className="text-sm font-medium text-[var(--theme-foreground)]">
                             {translateMessage(messages, 'admin.tokenLabels.border')}
                           </span>
-                          <input
+                          <Input
                             type="text"
                             name="borderDark"
                             defaultValue={theme.definition.darkTokens.border}
-                            className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                           />
                         </label>
                       </div>
@@ -474,15 +451,12 @@ export default async function AdminPage({
                   </div>
 
                   <div>
-                    <button
-                      type="submit"
-                      className="rounded-full border border-[var(--theme-border)] px-5 py-3 text-sm font-semibold text-[var(--theme-foreground)]"
-                    >
+                    <Button type="submit" variant="secondary" size="md">
                       {translateMessage(messages, 'admin.saveThemeButton')}
-                    </button>
+                    </Button>
                   </div>
                 </form>
-              </article>
+              </Card>
             );
           })}
         </div>

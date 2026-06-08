@@ -32,6 +32,7 @@ export type BlogPostListItem = {
   category: BlogTaxonomy | null;
   tags: BlogPostTag[];
   heroImage: BlogHeroImage | null;
+  previewImage: BlogHeroImage | null;
 };
 
 export type BlogPostDetail = BlogPostListItem & {
@@ -39,6 +40,15 @@ export type BlogPostDetail = BlogPostListItem & {
   seoTitle: string | null;
   seoDescription: string | null;
   alternateSlugs: Partial<Record<Locale, string>>;
+  author: {
+    id: string | null;
+    displayName: string | null;
+    avatarUrl: string | null;
+  } | null;
+};
+
+export type SearchableBlogPost = BlogPostListItem & {
+  searchText: string;
 };
 
 export type ResolvedLocalizedRecord<T> =

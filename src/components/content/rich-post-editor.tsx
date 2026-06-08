@@ -25,6 +25,7 @@ import type {
   ContentTagOption,
   EditorMediaOption,
 } from '@/types/content';
+import { Button, Card } from '@/components/ui';
 
 import {
   EditorToolbar,
@@ -595,7 +596,7 @@ export function RichPostEditor({
         }}
       />
 
-      <div className="rounded-[2rem] border border-[var(--theme-border)] bg-[rgba(255,255,255,0.52)] p-4 shadow-[0_18px_48px_rgba(15,23,42,0.06)]">
+      <Card className="overflow-hidden bg-[rgba(255,255,255,0.58)] p-4">
         <EditorToolbar
           editor={editor}
           labels={labels}
@@ -633,10 +634,10 @@ export function RichPostEditor({
         <div className="mt-4 space-y-3">
           <div
             className={[
-              'rounded-[1.75rem] border border-dashed px-5 py-5 transition',
+              'rounded-[1.75rem] border border-dashed px-5 py-5 transition duration-200',
               isDraggingMedia
-                ? 'border-[var(--theme-accent)] bg-[rgba(194,65,12,0.08)] ring-4 ring-[rgba(194,65,12,0.12)]'
-                : 'border-[var(--theme-border)] bg-[rgba(255,255,255,0.72)]',
+                ? 'border-[var(--theme-accent)] bg-[rgba(194,65,12,0.08)] shadow-[0_0_0_6px_rgba(194,65,12,0.08)]'
+                : 'border-[var(--theme-border-strong)] bg-[linear-gradient(180deg,_rgba(255,255,255,0.8),_rgba(255,247,237,0.7))]',
             ].join(' ')}
             onDragOver={(event) => {
               if (
@@ -665,20 +666,22 @@ export function RichPostEditor({
                 </p>
               </div>
               <div className="flex flex-wrap gap-3">
-                <button
+                <Button
                   type="button"
                   onClick={() => mediaInputRef.current?.click()}
-                  className="rounded-full bg-[var(--theme-accent)] px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(194,65,12,0.24)]"
+                  variant="primary"
+                  size="md"
                 >
                   {labels.uploadZoneButton}
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   onClick={() => setIsMediaPickerOpen(true)}
-                  className="rounded-full border border-[var(--theme-border)] bg-white px-5 py-3 text-sm font-semibold text-[var(--theme-foreground)]"
+                  variant="secondary"
+                  size="md"
                 >
                   {labels.imageDialogExisting}
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -711,9 +714,9 @@ export function RichPostEditor({
 
           <div
             className={[
-              'rounded-[1.75rem] border bg-white/78 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] transition',
+              'rounded-[1.75rem] border bg-white/78 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] transition duration-200',
               isDraggingMedia
-                ? 'border-[var(--theme-accent)] ring-4 ring-[rgba(194,65,12,0.12)]'
+                ? 'border-[var(--theme-accent)] shadow-[0_0_0_6px_rgba(194,65,12,0.08)]'
                 : 'border-[var(--theme-border)]',
             ].join(' ')}
             onDragOver={(event) => {
@@ -732,7 +735,7 @@ export function RichPostEditor({
             <EditorContent editor={editor} />
           </div>
         </div>
-      </div>
+      </Card>
 
       <EditorLinkBubble
         open={isLinkEditorOpen}

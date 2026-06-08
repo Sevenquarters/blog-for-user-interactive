@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 
+import { analyzeTipTapDocument } from '@/lib/content/content-analysis';
 import {
   normalizeStoredContent,
   type TipTapBlockNode,
@@ -39,7 +40,7 @@ function applyMarks(
       return (
         <code
           key={markKey}
-          className="rounded bg-[rgba(15,23,42,0.08)] px-1.5 py-0.5 font-mono text-[0.95em]"
+          className="rounded-[0.65rem] border border-[rgba(148,163,184,0.14)] bg-[rgba(15,23,42,0.08)] px-1.5 py-0.5 font-mono text-[0.95em]"
         >
           {result}
         </code>
@@ -113,8 +114,8 @@ function renderBlockNode(
         key={key}
         className={
           isNested
-            ? 'text-base leading-7 text-[var(--theme-foreground)]'
-            : 'text-lg leading-9 text-[var(--theme-foreground)]'
+            ? 'text-base leading-8 text-[var(--theme-foreground)]'
+            : 'text-[1.08rem] leading-9 text-[var(--theme-foreground)]'
         }
       >
         {renderInlineContent(block.content, key)}
@@ -126,8 +127,8 @@ function renderBlockNode(
     const level = Math.min(Math.max(block.attrs?.level ?? 2, 1), 6);
     const headingClass =
       level <= 2
-        ? 'mt-12 text-3xl font-semibold tracking-tight text-[var(--theme-foreground)]'
-        : 'mt-10 text-2xl font-semibold tracking-tight text-[var(--theme-foreground)]';
+        ? 'mt-14 text-3xl font-semibold tracking-tight text-[var(--theme-foreground)] sm:text-4xl'
+        : 'mt-10 text-2xl font-semibold tracking-tight text-[var(--theme-foreground)] sm:text-[1.8rem]';
 
     if (level === 1) {
       return (
@@ -180,7 +181,7 @@ function renderBlockNode(
     return (
       <blockquote
         key={key}
-        className="rounded-[1.75rem] border border-[var(--theme-border)] bg-white/70 px-6 py-5 text-xl leading-9 text-[var(--theme-foreground)] shadow-[0_18px_48px_rgba(15,23,42,0.06)]"
+        className="rounded-[1.85rem] border border-[var(--theme-border)] bg-[linear-gradient(180deg,_rgba(255,255,255,0.84),_rgba(255,247,237,0.72))] px-6 py-5 text-xl leading-9 text-[var(--theme-foreground)] shadow-[0_18px_48px_rgba(15,23,42,0.06)]"
       >
         <div className="space-y-4">
           {(block.content ?? []).map((child, index) =>
@@ -195,7 +196,7 @@ function renderBlockNode(
     return (
       <ul
         key={key}
-        className="space-y-3 rounded-[1.5rem] border border-[var(--theme-border)] bg-[rgba(255,255,255,0.72)] px-6 py-5 text-lg leading-8 text-[var(--theme-foreground)]"
+        className="space-y-3 rounded-[1.5rem] border border-[var(--theme-border)] bg-[rgba(255,255,255,0.74)] px-6 py-5 text-lg leading-8 text-[var(--theme-foreground)]"
       >
         {(block.content ?? []).map((item, index) => (
           <li key={`${key}-${index}`} className="flex gap-3">
@@ -214,7 +215,7 @@ function renderBlockNode(
       <ol
         key={key}
         start={block.attrs?.start ?? 1}
-        className="space-y-3 rounded-[1.5rem] border border-[var(--theme-border)] bg-[rgba(255,255,255,0.72)] px-6 py-5 pl-11 text-lg leading-8 text-[var(--theme-foreground)]"
+        className="space-y-3 rounded-[1.5rem] border border-[var(--theme-border)] bg-[rgba(255,255,255,0.74)] px-6 py-5 pl-11 text-lg leading-8 text-[var(--theme-foreground)]"
       >
         {(block.content ?? []).map((item, index) => (
           <li key={`${key}-${index}`} className="pl-1">
@@ -246,7 +247,7 @@ function renderBlockNode(
     return (
       <pre
         key={key}
-        className="overflow-x-auto rounded-[1.5rem] border border-[var(--theme-border)] bg-[#111827] px-5 py-4 text-sm leading-7 text-slate-100 shadow-[0_18px_48px_rgba(15,23,42,0.16)]"
+        className="overflow-x-auto rounded-[1.6rem] border border-[var(--theme-border)] bg-[#111827] px-5 py-4 text-sm leading-7 text-slate-100 shadow-[0_22px_56px_rgba(15,23,42,0.18)]"
       >
         <code>{code}</code>
       </pre>
@@ -268,7 +269,7 @@ function renderBlockNode(
     return (
       <figure
         key={key}
-        className="overflow-hidden rounded-[1.75rem] border border-[var(--theme-border)] bg-white/75 shadow-[0_18px_48px_rgba(15,23,42,0.08)]"
+        className="overflow-hidden rounded-[1.95rem] border border-[var(--theme-border)] bg-white/75 shadow-[0_22px_58px_rgba(15,23,42,0.1)]"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -302,7 +303,7 @@ function renderBlockNode(
     return (
       <figure
         key={key}
-        className="overflow-hidden rounded-[1.75rem] border border-[var(--theme-border)] bg-white/75 shadow-[0_18px_48px_rgba(15,23,42,0.08)]"
+        className="overflow-hidden rounded-[1.95rem] border border-[var(--theme-border)] bg-white/75 shadow-[0_22px_58px_rgba(15,23,42,0.1)]"
       >
         <video
           src={src}
@@ -330,16 +331,82 @@ function renderBlockNode(
 
 export function ContentRenderer({ content }: ContentRendererProps) {
   const normalizedContent = normalizeStoredContent(content);
+  const { headings } = analyzeTipTapDocument(normalizedContent);
+  let headingIndex = 0;
 
   if (normalizedContent.content.length === 0) {
     return null;
   }
 
   return (
-    <div className="space-y-7">
+    <div className="space-y-8">
       {normalizedContent.content.map((block, index) =>
-        renderBlockNode(block, `block-${index}`),
+        renderBlockNodeWithAnchors(block, `block-${index}`),
       )}
     </div>
   );
+
+  function renderBlockNodeWithAnchors(
+    block: TipTapBlockNode,
+    key: string,
+    isNested = false,
+  ): ReactNode {
+    if (block.type !== 'heading') {
+      return renderBlockNode(block, key, isNested);
+    }
+
+    const level = Math.min(Math.max(block.attrs?.level ?? 2, 1), 6);
+    const headingClass =
+      level <= 2
+        ? 'mt-14 scroll-mt-28 text-3xl font-semibold tracking-tight text-[var(--theme-foreground)] sm:text-4xl'
+        : 'mt-10 scroll-mt-28 text-2xl font-semibold tracking-tight text-[var(--theme-foreground)] sm:text-[1.8rem]';
+    const headingId = headings[headingIndex]?.id;
+    headingIndex += 1;
+
+    if (level === 1) {
+      return (
+        <h1 key={key} id={headingId} className={headingClass}>
+          {renderInlineContent(block.content, key)}
+        </h1>
+      );
+    }
+
+    if (level === 2) {
+      return (
+        <h2 key={key} id={headingId} className={headingClass}>
+          {renderInlineContent(block.content, key)}
+        </h2>
+      );
+    }
+
+    if (level === 3) {
+      return (
+        <h3 key={key} id={headingId} className={headingClass}>
+          {renderInlineContent(block.content, key)}
+        </h3>
+      );
+    }
+
+    if (level === 4) {
+      return (
+        <h4 key={key} id={headingId} className={headingClass}>
+          {renderInlineContent(block.content, key)}
+        </h4>
+      );
+    }
+
+    if (level === 5) {
+      return (
+        <h5 key={key} id={headingId} className={headingClass}>
+          {renderInlineContent(block.content, key)}
+        </h5>
+      );
+    }
+
+    return (
+      <h6 key={key} id={headingId} className={headingClass}>
+        {renderInlineContent(block.content, key)}
+      </h6>
+    );
+  }
 }

@@ -1,5 +1,6 @@
 import type { Locale } from '@/i18n/config';
 import { logoutAction } from '@/lib/auth/actions';
+import { Button } from '@/components/ui';
 
 type LogoutButtonProps = {
   locale: Locale;
@@ -11,12 +12,9 @@ export function LogoutButton({ locale, label }: LogoutButtonProps) {
 
   return (
     <form action={logoutForLocale}>
-      <button
-        type="submit"
-        className="rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface)] px-4 py-2 text-sm font-medium text-[var(--theme-foreground)]"
-      >
+      <Button type="submit" variant="secondary" size="sm">
         {label}
-      </button>
+      </Button>
     </form>
   );
 }

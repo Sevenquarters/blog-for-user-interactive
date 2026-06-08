@@ -1,3 +1,5 @@
+import { Card } from '@/components/ui';
+
 type AuthCardProps = {
   title: string;
   description: string;
@@ -6,7 +8,10 @@ type AuthCardProps = {
 
 export function AuthCard({ title, description, children }: AuthCardProps) {
   return (
-    <section className="mx-auto w-full max-w-xl rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-8 shadow-[0_30px_80px_rgba(15,23,42,0.08)]">
+    <Card
+      tone="elevated"
+      className="mx-auto w-full max-w-xl overflow-hidden bg-[var(--theme-hero)] p-8"
+    >
       <h1 className="text-3xl font-semibold tracking-tight text-[var(--theme-foreground)]">
         {title}
       </h1>
@@ -14,6 +19,6 @@ export function AuthCard({ title, description, children }: AuthCardProps) {
         {description}
       </p>
       <div className="mt-8">{children}</div>
-    </section>
+    </Card>
   );
 }

@@ -49,15 +49,15 @@ type UpdateSiteSettingsInput = {
 function buildDefaultTranslation(locale: 'en' | 'zh-CN') {
   if (locale === 'zh-CN') {
     return {
-      siteName: '交互式博客平台',
-      siteDescription: '一个基于 Supabase 与 Next.js 构建的交互式博客平台。',
+      siteName: '佩奇博客',
+      siteDescription: '一个用于发布随笔、产品思考与工程写作的个人内容平台。',
     };
   }
 
   return {
-    siteName: 'Blog For User Interactive',
+    siteName: 'PeppaBlog',
     siteDescription:
-      'An interactive blog platform powered by Supabase and Next.js.',
+      'A personal publishing platform for thoughtful essays, product notes, and engineering writing.',
   };
 }
 

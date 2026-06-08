@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { PostCard } from '@/components/public/post-card';
+import { Card, badgeClassName, buttonClassName, cardClassName, cn } from '@/components/ui';
 import { isSupportedLocale } from '@/i18n/config';
 import { getMessages } from '@/i18n/dictionaries';
 import { translateMessage } from '@/i18n/messages';
@@ -37,7 +38,7 @@ export default async function HomePage({ params }: HomePageProps) {
 
   return (
     <div className="flex w-full flex-col gap-8">
-      <section className="overflow-hidden rounded-[2.75rem] border border-[var(--theme-border)] bg-[linear-gradient(120deg,_rgba(255,247,237,0.98),_rgba(255,255,255,0.95)_52%,_rgba(254,240,138,0.36)_100%)] p-8 shadow-[0_32px_90px_rgba(15,23,42,0.12)] sm:p-10">
+      <Card tone="hero" className="overflow-hidden rounded-[2.75rem] p-8 sm:p-10">
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
           <div>
             <p className="text-sm font-semibold tracking-[0.24em] text-[var(--theme-accent)] uppercase">
@@ -53,13 +54,13 @@ export default async function HomePage({ params }: HomePageProps) {
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href={buildLocalePath(locale, '/blog')}
-                className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--theme-accent)] px-6 py-3 text-sm font-semibold text-white shadow-[0_16px_38px_rgba(194,65,12,0.32)] transition hover:-translate-y-0.5"
+                className={buttonClassName({ variant: 'primary', size: 'lg' })}
               >
                 {translateMessage(messages, 'home.primaryCta')}
               </Link>
               <Link
                 href={buildLocalePath(locale, '/dashboard')}
-                className="inline-flex min-h-12 items-center justify-center rounded-full border border-[var(--theme-border)] bg-white/70 px-6 py-3 text-sm font-semibold text-[var(--theme-foreground)] transition hover:-translate-y-0.5"
+                className={buttonClassName({ variant: 'secondary', size: 'lg' })}
               >
                 {translateMessage(messages, 'home.secondaryCta')}
               </Link>
@@ -67,7 +68,7 @@ export default async function HomePage({ params }: HomePageProps) {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-[1.75rem] border border-[var(--theme-border)] bg-white/72 p-5">
+            <div className={cardClassName({ tone: 'subtle', className: 'rounded-[1.75rem] p-5' })}>
               <p className="text-sm text-[var(--theme-muted)]">
                 {translateMessage(messages, 'home.statPublishedPosts')}
               </p>
@@ -75,7 +76,7 @@ export default async function HomePage({ params }: HomePageProps) {
                 {posts.length}
               </p>
             </div>
-            <div className="rounded-[1.75rem] border border-[var(--theme-border)] bg-white/72 p-5">
+            <div className={cardClassName({ tone: 'subtle', className: 'rounded-[1.75rem] p-5' })}>
               <p className="text-sm text-[var(--theme-muted)]">
                 {translateMessage(messages, 'home.statCategories')}
               </p>
@@ -85,7 +86,7 @@ export default async function HomePage({ params }: HomePageProps) {
             </div>
           </div>
         </div>
-      </section>
+      </Card>
 
       <section className="grid gap-8 xl:grid-cols-[1fr_20rem]">
         <div className="space-y-8">
@@ -150,7 +151,7 @@ export default async function HomePage({ params }: HomePageProps) {
                 ))}
               </div>
             ) : (
-              <div className="rounded-[2rem] border border-dashed border-[var(--theme-border)] bg-[var(--theme-surface)] p-8 text-base leading-8 text-[var(--theme-muted)]">
+              <div className={cardClassName({ tone: 'dashed', className: 'p-8 text-base leading-8 text-[var(--theme-muted)]' })}>
                 {translateMessage(messages, 'blog.emptyState')}
               </div>
             )}
@@ -158,7 +159,7 @@ export default async function HomePage({ params }: HomePageProps) {
         </div>
 
         <aside className="space-y-6">
-          <div className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+          <Card className="p-6">
             <p className="text-sm font-semibold tracking-[0.18em] text-[var(--theme-accent)] uppercase">
               {translateMessage(messages, 'home.categoriesTitle')}
             </p>
@@ -170,13 +171,16 @@ export default async function HomePage({ params }: HomePageProps) {
                     locale,
                     `/category/${encodeURIComponent(category.slug)}`,
                   )}
-                  className="rounded-full border border-[var(--theme-border)] px-3 py-2 text-sm text-[var(--theme-foreground)] transition hover:border-[var(--theme-accent)] hover:text-[var(--theme-accent)]"
+                  className={cn(
+                    badgeClassName('outline'),
+                    'px-3 py-2 transition hover:border-[var(--theme-accent)] hover:text-[var(--theme-accent)]',
+                  )}
                 >
                   {category.name}
                 </Link>
               ))}
             </div>
-          </div>
+          </Card>
         </aside>
       </section>
     </div>

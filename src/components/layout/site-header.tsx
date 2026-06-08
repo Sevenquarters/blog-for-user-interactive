@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 
 import { LanguageSwitcher } from '@/components/i18n/language-switcher';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
+import { buttonClassName, cn } from '@/components/ui';
 import { useLocale, useTranslations } from '@/providers/locale-provider';
 
 export function SiteHeader() {
@@ -25,18 +26,25 @@ export function SiteHeader() {
       label: t('nav.dashboard'),
     },
     {
+      href: `/${locale}/search`,
+      label: locale === 'zh-CN' ? '搜索' : 'Search',
+    },
+    {
       href: `/${locale}/login`,
       label: t('nav.login'),
     },
   ];
 
   return (
-    <header className="sticky top-0 z-20 border-b border-[var(--theme-border)] bg-[rgba(255,253,248,0.82)] backdrop-blur xl:bg-[rgba(255,253,248,0.7)] dark:bg-[rgba(17,24,39,0.74)]">
+    <header className="sticky top-0 z-20 border-b border-[var(--theme-border)] bg-[color:var(--theme-surface)]/90 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <Link href={`/${locale}`} className="flex items-center gap-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--theme-accent)] text-sm font-bold text-white shadow-[0_12px_28px_rgba(194,65,12,0.32)]">
-              BI
+          <Link
+            href={`/${locale}`}
+            className="flex items-center gap-3 rounded-[1.5rem] pr-2 transition hover:translate-x-0.5"
+          >
+            <span className="inline-flex h-11 w-11 items-center justify-center rounded-[1.15rem] bg-[var(--theme-accent)] text-sm font-bold text-white shadow-[0_16px_32px_rgba(194,65,12,0.32)]">
+              PB
             </span>
             <div>
               <p className="text-sm font-semibold tracking-[0.2em] text-[var(--theme-accent)] uppercase">
@@ -48,13 +56,13 @@ export function SiteHeader() {
             </div>
           </Link>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <LanguageSwitcher />
             <ThemeToggle />
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 rounded-[1.6rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 shadow-[0_16px_40px_rgba(15,23,42,0.05)]">
           {navigationItems.map((item) => {
             const isActive =
               pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -63,11 +71,14 @@ export function SiteHeader() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                  isActive
-                    ? 'bg-[var(--theme-accent)] text-white shadow-[0_12px_28px_rgba(194,65,12,0.2)]'
-                    : 'border border-[var(--theme-border)] bg-[var(--theme-surface)] text-[var(--theme-foreground)] hover:-translate-y-0.5'
-                }`}
+                className={cn(
+                  buttonClassName({
+                    variant: isActive ? 'primary' : 'ghost',
+                    size: 'sm',
+                    active: isActive,
+                  }),
+                  'min-h-10',
+                )}
               >
                 {item.label}
               </Link>

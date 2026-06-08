@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { ContentFlashMessage } from '@/components/content/content-flash-message';
+import { Badge, Button, Card, TabsList, tabTriggerClassName, cardClassName } from '@/components/ui';
 import { isSupportedLocale } from '@/i18n/config';
 import { getMessages } from '@/i18n/dictionaries';
 import { translateMessage } from '@/i18n/messages';
@@ -91,7 +92,7 @@ export default async function CommentsPage({
 
   return (
     <section className="w-full space-y-6">
-      <div className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-8 shadow-[0_30px_80px_rgba(15,23,42,0.08)]">
+      <Card tone="hero" className="p-8">
         <p className="text-sm font-semibold tracking-[0.24em] text-[var(--theme-accent)] uppercase">
           {translateMessage(messages, 'comments.eyebrow')}
         </p>
@@ -101,7 +102,7 @@ export default async function CommentsPage({
         <p className="mt-3 max-w-3xl text-base leading-7 text-[var(--theme-muted)]">
           {translateMessage(messages, 'comments.description')}
         </p>
-      </div>
+      </Card>
 
       {successPath ? (
         <ContentFlashMessage
@@ -116,7 +117,7 @@ export default async function CommentsPage({
         />
       ) : null}
 
-      <div className="flex flex-wrap gap-3">
+      <TabsList className="w-fit">
         {STATUSES.map((status) => {
           const isActive = selectedStatus === status;
           const href =
@@ -131,11 +132,7 @@ export default async function CommentsPage({
             <Link
               key={status}
               href={href}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                isActive
-                  ? 'bg-[var(--theme-accent)] text-white shadow-[0_12px_28px_rgba(194,65,12,0.2)]'
-                  : 'border border-[var(--theme-border)] bg-[var(--theme-surface)] text-[var(--theme-foreground)]'
-              }`}
+              className={tabTriggerClassName(isActive)}
             >
               {status === 'all'
                 ? translateMessage(messages, 'comments.filters.all')
@@ -144,10 +141,10 @@ export default async function CommentsPage({
             </Link>
           );
         })}
-      </div>
+      </TabsList>
 
       {comments.length === 0 ? (
-        <div className="rounded-[2rem] border border-dashed border-[var(--theme-border)] bg-[var(--theme-surface)] p-8 text-base leading-8 text-[var(--theme-muted)]">
+        <div className={cardClassName({ tone: 'dashed', className: 'p-8 text-base leading-8 text-[var(--theme-muted)]' })}>
           {translateMessage(messages, 'comments.emptyState')}
         </div>
       ) : (
@@ -178,16 +175,17 @@ export default async function CommentsPage({
             );
 
             return (
-              <article
+              <Card
                 key={comment.id}
-                className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-[0_18px_48px_rgba(15,23,42,0.06)]"
+                as="article"
+                className="p-6"
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="space-y-3">
                     <div className="flex flex-wrap items-center gap-3">
-                      <span className="rounded-full bg-white/80 px-3 py-1 text-sm text-[var(--theme-foreground)]">
+                      <Badge>
                         {getStatusLabel(messages, comment.status)}
-                      </span>
+                      </Badge>
                       <span className="text-sm text-[var(--theme-muted)]">
                         {translateMessage(messages, 'comments.createdLabel')}:{' '}
                         {formatDate(locale, comment.createdAt)}
@@ -225,40 +223,28 @@ export default async function CommentsPage({
 
                   <div className="flex flex-wrap gap-3">
                     <form action={approveAction}>
-                      <button
-                        type="submit"
-                        className="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700"
-                      >
+                      <Button type="submit" variant="success" size="sm">
                         {translateMessage(messages, 'comments.approve')}
-                      </button>
+                      </Button>
                     </form>
                     <form action={rejectAction}>
-                      <button
-                        type="submit"
-                        className="rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-700"
-                      >
+                      <Button type="submit" variant="warning" size="sm">
                         {translateMessage(messages, 'comments.reject')}
-                      </button>
+                      </Button>
                     </form>
                     <form action={spamAction}>
-                      <button
-                        type="submit"
-                        className="rounded-full border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700"
-                      >
+                      <Button type="submit" variant="neutral" size="sm">
                         {translateMessage(messages, 'comments.markSpam')}
-                      </button>
+                      </Button>
                     </form>
                     <form action={deleteAction}>
-                      <button
-                        type="submit"
-                        className="rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700"
-                      >
+                      <Button type="submit" variant="danger" size="sm">
                         {translateMessage(messages, 'comments.delete')}
-                      </button>
+                      </Button>
                     </form>
                   </div>
                 </div>
-              </article>
+              </Card>
             );
           })}
         </div>

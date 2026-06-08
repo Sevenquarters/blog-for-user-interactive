@@ -18,3 +18,17 @@ export type ModerationCommentRecord = {
     title: string;
   };
 };
+
+export type PublicCommentRecord = {
+  id: string;
+  parentCommentId: string | null;
+  authorName: string;
+  parentAuthorName: string | null;
+  content: string;
+  createdAt: string;
+  createdAtLabel: string;
+};
+
+export type PublicCommentThread = PublicCommentRecord & {
+  replies: PublicCommentThread[];
+};

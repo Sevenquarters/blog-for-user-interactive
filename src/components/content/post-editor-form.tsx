@@ -1,4 +1,11 @@
 import { RichPostEditor } from '@/components/content/rich-post-editor';
+import {
+  Button,
+  Card,
+  Input,
+  Select,
+  cardClassName,
+} from '@/components/ui';
 import type { Locale } from '@/i18n/config';
 import { getMessages } from '@/i18n/dictionaries';
 import { translateMessage } from '@/i18n/messages';
@@ -146,17 +153,16 @@ export async function PostEditorForm({
         />
         <input type="hidden" name="contentLocale" value={translation.locale} />
 
-        <section className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-[0_18px_48px_rgba(15,23,42,0.06)]">
+        <Card className="p-6">
           <div className="space-y-4">
             <label className="block space-y-2">
               <span className="text-sm font-medium text-[var(--theme-foreground)]">
                 {translateMessage(messages, 'content.fields.title')}
               </span>
-              <input
+              <Input
                 type="text"
                 name="title"
                 defaultValue={translation.title}
-                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
               />
             </label>
 
@@ -174,19 +180,18 @@ export async function PostEditorForm({
               />
             </label>
           </div>
-        </section>
+        </Card>
 
-        <section className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-[0_18px_48px_rgba(15,23,42,0.06)]">
+        <Card className="p-6">
           <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,0.9fr)]">
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
               <label className="space-y-2">
                 <span className="text-sm font-medium text-[var(--theme-foreground)]">
                   {translateMessage(messages, 'content.fields.status')}
                 </span>
-                <select
+                <Select
                   name="status"
                   defaultValue={post.status}
-                  className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                 >
                   <option value="draft">
                     {translateMessage(messages, 'content.status.draft')}
@@ -200,18 +205,17 @@ export async function PostEditorForm({
                   <option value="archived">
                     {translateMessage(messages, 'content.status.archived')}
                   </option>
-                </select>
+                </Select>
               </label>
 
               <label className="space-y-2">
                 <span className="text-sm font-medium text-[var(--theme-foreground)]">
                   {translateMessage(messages, 'content.fields.publishTime')}
                 </span>
-                <input
+                <Input
                   type="datetime-local"
                   name="publishedAt"
                   defaultValue={toDatetimeLocalValue(post.publishedAt)}
-                  className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                 />
               </label>
 
@@ -219,12 +223,11 @@ export async function PostEditorForm({
                 <span className="text-sm font-medium text-[var(--theme-foreground)]">
                   {translateMessage(messages, 'content.fields.readingTime')}
                 </span>
-                <input
+                <Input
                   type="number"
                   min="1"
                   name="readingTimeMinutes"
                   defaultValue={post.readingTimeMinutes ?? ''}
-                  className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                 />
               </label>
 
@@ -232,10 +235,9 @@ export async function PostEditorForm({
                 <span className="text-sm font-medium text-[var(--theme-foreground)]">
                   {translateMessage(messages, 'content.fields.category')}
                 </span>
-                <select
+                <Select
                   name="categoryId"
                   defaultValue={post.category?.id ?? ''}
-                  className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                 >
                   <option value="">
                     {translateMessage(messages, 'content.fields.none')}
@@ -245,12 +247,12 @@ export async function PostEditorForm({
                       {category.name}
                     </option>
                   ))}
-                </select>
+                </Select>
               </label>
             </div>
 
-            <div className="rounded-[1.5rem] border border-[var(--theme-border)] bg-white/70 p-4">
-              <label className="inline-flex items-center gap-3 rounded-full border border-[var(--theme-border)] bg-white px-4 py-2 text-sm text-[var(--theme-foreground)]">
+            <div className={cardClassName({ tone: 'subtle', className: 'rounded-[1.5rem] p-4' })}>
+              <label className="inline-flex items-center gap-3 rounded-full border border-[var(--theme-border-strong)] bg-white px-4 py-2 text-sm text-[var(--theme-foreground)]">
                 <input
                   type="checkbox"
                   name="isFeatured"
@@ -263,14 +265,13 @@ export async function PostEditorForm({
                 <span className="text-sm font-medium text-[var(--theme-foreground)]">
                   {translateMessage(messages, 'content.fields.changeSummary')}
                 </span>
-                <input
+                <Input
                   type="text"
                   name="changeSummary"
                   placeholder={translateMessage(
                     messages,
                     'content.fields.changeSummaryPlaceholder',
                   )}
-                  className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                 />
               </label>
             </div>
@@ -284,7 +285,7 @@ export async function PostEditorForm({
               {tags.map((tag) => (
                 <label
                   key={tag.id}
-                  className="inline-flex items-center gap-3 rounded-full border border-[var(--theme-border)] bg-white/70 px-4 py-2 text-sm text-[var(--theme-foreground)]"
+                  className="inline-flex items-center gap-3 rounded-full border border-[var(--theme-border-strong)] bg-white/74 px-4 py-2 text-sm text-[var(--theme-foreground)] transition hover:-translate-y-0.5"
                 >
                   <input
                     type="checkbox"
@@ -297,7 +298,7 @@ export async function PostEditorForm({
               ))}
             </div>
           </fieldset>
-        </section>
+        </Card>
 
         <input type="hidden" name="heroMediaId" value={selectedHeroMediaId} />
         <input type="hidden" name="slug" value={translation.slug} />
@@ -311,26 +312,20 @@ export async function PostEditorForm({
         <input type="hidden" name="coverAlt" value={translation.coverAlt} />
 
         <div className="flex flex-wrap items-center gap-3">
-          <button
-            type="submit"
-            className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--theme-accent)] px-6 py-3 text-sm font-semibold text-white shadow-[0_16px_38px_rgba(194,65,12,0.3)] transition hover:-translate-y-0.5"
-          >
+          <Button type="submit" variant="primary" size="lg">
             {translateMessage(
               messages,
               isEditing ? 'content.savePost' : 'content.createPost',
             )}
-          </button>
+          </Button>
         </div>
       </form>
 
       {deleteAction ? (
         <form action={deleteAction}>
-          <button
-            type="submit"
-            className="rounded-full border border-red-200 bg-red-50 px-5 py-3 text-sm font-semibold text-red-700"
-          >
+          <Button type="submit" variant="danger" size="md">
             {translateMessage(messages, 'content.deletePost')}
-          </button>
+          </Button>
         </form>
       ) : null}
     </div>

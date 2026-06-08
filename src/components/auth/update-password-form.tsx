@@ -6,6 +6,7 @@ import { updatePasswordAction } from '@/lib/auth/actions';
 import { getInitialAuthFormState } from '@/lib/auth/form-state';
 import type { Locale } from '@/i18n/config';
 import { useTranslations } from '@/providers/locale-provider';
+import { Input } from '@/components/ui';
 
 import { AuthFormMessage } from './auth-form-message';
 import { AuthSubmitButton } from './auth-submit-button';
@@ -30,12 +31,11 @@ export function UpdatePasswordForm({ locale }: UpdatePasswordFormProps) {
         <span className="text-sm font-medium text-[var(--theme-foreground)]">
           {t('auth.passwordLabel')}
         </span>
-        <input
+        <Input
           type="password"
           name="password"
           required
           minLength={8}
-          className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)] transition outline-none focus:border-[var(--theme-accent)]"
         />
       </label>
 
@@ -43,12 +43,11 @@ export function UpdatePasswordForm({ locale }: UpdatePasswordFormProps) {
         <span className="text-sm font-medium text-[var(--theme-foreground)]">
           {t('auth.confirmPasswordLabel')}
         </span>
-        <input
+        <Input
           type="password"
           name="confirmPassword"
           required
           minLength={8}
-          className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)] transition outline-none focus:border-[var(--theme-accent)]"
         />
       </label>
 

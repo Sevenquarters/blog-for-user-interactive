@@ -1,11 +1,11 @@
 {
   "meta": {
-    "title": "交互式博客平台",
-    "description": "一个基于 Next.js 与 Supabase 构建的中英双语博客。"
+    "title": "佩奇博客",
+    "description": "一个用于发布随笔、产品思考与工程写作的个人内容平台。"
   },
   "common": {
-    "phase": "公开博客",
-    "projectName": "双语内容平台"
+    "phase": "个人发布平台",
+    "projectName": "佩奇博客"
   },
   "locales": {
     "en": "英文",
@@ -68,7 +68,7 @@
   },
   "home": {
     "eyebrow": "已发布内容",
-    "description": "一个同时服务于中文与英文读者的内容空间，用来记录产品思考、工程实践与设计系统决策。",
+    "description": "一个适合沉浸阅读的个人内容空间，用来记录产品思考、工程实践与值得反复回看的长文。",
     "primaryCta": "浏览博客",
     "secondaryCta": "进入控制台",
     "statPublishedPosts": "已发布文章",
@@ -80,8 +80,8 @@
   },
   "blog": {
     "eyebrow": "内容归档",
-    "indexTitle": "双语博客归档",
-    "indexDescription": "浏览已经发布的中英双语文章，并通过分类与标签快速切换你关心的主题。",
+    "indexTitle": "佩奇博客归档",
+    "indexDescription": "浏览已经发布的文章，通过分类与标签更轻松地发现你关心的主题。",
     "featuredTitle": "精选文章",
     "latestTitle": "最新内容",
     "categoriesTitle": "分类",
@@ -92,8 +92,11 @@
     "featuredBadge": "精选",
     "readArticle": "阅读全文",
     "readingTime": "预计 {minutes} 分钟",
-    "emptyState": "暂时还没有已发布文章。你可以先在 Supabase 中插入发布状态的内容，再回来查看前台效果。",
+    "emptyState": "暂时还没有已发布文章。先发布第一篇内容，让佩奇博客真正开始运转。",
     "backToBlog": "返回博客",
+    "paginationPrevious": "上一页",
+    "paginationNext": "下一页",
+    "paginationPage": "第 {page} 页，共 {total} 页",
     "browseFiltersTitle": "继续浏览",
     "activeFiltersLabel": "你可以在不离开当前页面的情况下切换分类和标签。",
     "clearCategoryFilter": "清除分类",
@@ -213,7 +216,7 @@
   "dashboard": {
     "eyebrow": "受保护路由",
     "title": "账户控制台",
-    "description": "这个受保护的页面用于验证 Supabase 会话流程、个人资料加载、路由守卫和可复用的数据库仓储层。",
+    "description": "在这里查看账户状态、发布配置，并快速进入佩奇博客的核心工作区。",
     "roleLabel": "角色",
     "emailLabel": "邮箱",
     "localeLabel": "偏好语言",
@@ -225,7 +228,7 @@
   "profile": {
     "eyebrow": "个人资料加载",
     "title": "个人资料详情",
-    "description": "这个页面通过共享的服务端数据层从 Supabase 加载当前登录用户的个人资料。",
+    "description": "管理你在佩奇博客发布工作区中使用的账户身份信息。",
     "displayNameLabel": "显示名称",
     "emailLabel": "邮箱",
     "roleLabel": "角色",
@@ -234,7 +237,7 @@
   "admin": {
     "eyebrow": "仅限管理员路由",
     "title": "展示管理",
-    "description": "在同一个后台中管理站点名称、默认语言、启用主题和面向前台的展示配色。",
+    "description": "在同一个后台中管理佩奇博客品牌、默认语言、启用主题与整体展示风格。",
     "currentRoleLabel": "当前角色",
     "siteNameLabel": "站点名称",
     "defaultLocaleLabel": "默认语言",
@@ -279,7 +282,7 @@
   "media": {
     "eyebrow": "媒体工作台",
     "title": "媒体库",
-    "description": "上传、补充说明、替换和删除可复用的图片或视频素材，为内容编辑提供共享资源。",
+    "description": "上传、补充说明、替换和删除可复用的图片或视频素材，为佩奇博客内容发布提供共享资源。",
     "uploadTitle": "上传新媒体",
     "libraryTitle": "已存储媒体",
     "fileLabel": "媒体文件",
@@ -311,7 +314,7 @@
   "comments": {
     "eyebrow": "审核队列",
     "title": "评论审核",
-    "description": "在公开评论入口上线前，先在后台审核待处理评论、通过正常内容并清理垃圾信息。",
+    "description": "在公开评论入口上线前，先在后台审核待处理评论，维护佩奇博客的讨论质量。",
     "filters": {
       "all": "全部"
     },

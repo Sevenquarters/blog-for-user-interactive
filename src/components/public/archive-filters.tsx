@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+import { Card, cn } from '@/components/ui';
+
 type ArchiveFilterLink = {
   id: string;
   href: string;
@@ -55,8 +57,8 @@ export function ArchiveFilters({
   activeTag,
 }: ArchiveFiltersProps) {
   return (
-    <aside className="space-y-6">
-      <div className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+    <aside className="space-y-6 xl:sticky xl:top-28 xl:self-start">
+      <Card className="p-6">
         <Link
           href={backHref}
           className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--theme-accent)]"
@@ -103,9 +105,9 @@ export function ArchiveFilters({
             ) : null}
           </div>
         </div>
-      </div>
+      </Card>
 
-      <div className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+      <Card className="p-6">
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--theme-accent)] uppercase">
           {categoriesTitle}
         </p>
@@ -114,15 +116,15 @@ export function ArchiveFilters({
             <Link
               key={category.id}
               href={category.href}
-              className={getChipClassName(category.active)}
+              className={cn(getChipClassName(category.active), 'hover:-translate-y-0.5')}
             >
               {category.label}
             </Link>
           ))}
         </div>
-      </div>
+      </Card>
 
-      <div className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+      <Card className="p-6">
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--theme-accent)] uppercase">
           {tagsTitle}
         </p>
@@ -131,13 +133,13 @@ export function ArchiveFilters({
             <Link
               key={tag.id}
               href={tag.href}
-              className={getChipClassName(tag.active, true)}
+              className={cn(getChipClassName(tag.active, true), 'hover:-translate-y-0.5')}
             >
               {tag.label}
             </Link>
           ))}
         </div>
-      </div>
+      </Card>
     </aside>
   );
 }

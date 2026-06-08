@@ -1,5 +1,7 @@
 'use client';
 
+import { Button, Input } from '@/components/ui';
+
 type EditorLinkBubbleProps = {
   open: boolean;
   href: string;
@@ -35,7 +37,7 @@ export function EditorLinkBubble({
 
   return (
     <div
-      className="fixed z-50 w-[min(26rem,calc(100vw-2rem))] rounded-[1.25rem] border border-[var(--theme-border)] bg-white/98 p-4 shadow-[0_24px_60px_rgba(15,23,42,0.16)]"
+      className="fixed z-50 w-[min(26rem,calc(100vw-2rem))] rounded-[1.4rem] border border-[var(--theme-border)] bg-white/98 p-4 shadow-[0_24px_60px_rgba(15,23,42,0.16)]"
       style={{
         top: `${position.top}px`,
         left: `${position.left}px`,
@@ -45,35 +47,23 @@ export function EditorLinkBubble({
         <label className="text-sm font-semibold text-[var(--theme-foreground)]">
           {labels.url}
         </label>
-        <button
-          type="button"
-          onClick={onClose}
-          className="rounded-full border border-[var(--theme-border)] px-3 py-1 text-xs font-semibold text-[var(--theme-muted)]"
-        >
+        <Button type="button" variant="secondary" size="sm" onClick={onClose}>
           {labels.close}
-        </button>
+        </Button>
       </div>
-      <input
+      <Input
         type="url"
         value={href}
         onChange={(event) => onHrefChange(event.target.value)}
-        className="mt-3 w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
+        className="mt-3"
       />
       <div className="mt-3 flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={onApply}
-          className="rounded-full bg-[var(--theme-accent)] px-4 py-2 text-sm font-semibold text-white"
-        >
+        <Button type="button" onClick={onApply} variant="primary" size="sm">
           {labels.save}
-        </button>
-        <button
-          type="button"
-          onClick={onRemove}
-          className="rounded-full border border-[var(--theme-border)] px-4 py-2 text-sm font-semibold text-[var(--theme-foreground)]"
-        >
+        </Button>
+        <Button type="button" onClick={onRemove} variant="secondary" size="sm">
           {labels.remove}
-        </button>
+        </Button>
       </div>
     </div>
   );

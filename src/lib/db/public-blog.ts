@@ -1,11 +1,16 @@
 import 'server-only';
 
 import type { Locale } from '@/i18n/config';
-import { buildExcerptFromContent } from '@/lib/blog/content';
+import {
+  buildExcerptFromContent,
+  extractPreviewImageFromContent,
+} from '@/lib/blog/content';
+import { extractContentText } from '@/lib/content/content-format';
 import {
   createSupabasePublicClient,
   getSupabaseStoragePublicUrl,
 } from '@/lib/supabase/public';
+import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 import type {
   BlogHeroImage,
   BlogPostDetail,
@@ -13,6 +18,7 @@ import type {
   BlogPostTag,
   BlogTaxonomy,
   ResolvedLocalizedRecord,
+  SearchableBlogPost,
 } from '@/types/blog';
 
 import { throwIfSupabaseError } from './utils';
@@ -35,9 +41,16 @@ type TranslationRow = {
 
 type PostRow = {
   id: string;
+  author_id: string | null;
   published_at: string;
   is_featured: boolean;
   reading_time_minutes: number | null;
+  profiles:
+    | {
+        display_name: string | null;
+        avatar_url: string | null;
+      }
+    | null;
   post_translations: TranslationRow[] | null;
   categories:
     | {
@@ -89,11 +102,24 @@ type PublicSiteSettings = {
   siteDescription: string | null;
 };
 
+export type PaginatedPublishedPosts = {
+  items: BlogPostListItem[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+};
+
 const PUBLIC_POST_SELECT = `
   id,
+  author_id,
   published_at,
   is_featured,
   reading_time_minutes,
+  profiles:author_id (
+    display_name,
+    avatar_url
+  ),
   post_translations (
     locale,
     title,
@@ -339,6 +365,9 @@ function mapPostListItem(row: PostRow, locale: Locale): BlogPostListItem | null 
       locale,
       translation.cover_alt ?? null,
     ),
+    previewImage:
+      mapHeroImage(row.media_assets, locale, translation.cover_alt ?? null) ??
+      extractPreviewImageFromContent(translation.content),
   };
 }
 
@@ -369,6 +398,13 @@ function mapPostDetail(row: PostRow, locale: Locale): BlogPostDetail | null {
       translation.excerpt ??
       buildExcerptFromContent(translation.content),
     alternateSlugs,
+    author: row.author_id
+      ? {
+          id: row.author_id,
+          displayName: row.profiles?.display_name ?? null,
+          avatarUrl: row.profiles?.avatar_url ?? null,
+        }
+      : null,
   };
 }
 
@@ -434,7 +470,7 @@ export async function getPublicSiteSettings(locale: Locale) {
   if (!data) {
     return {
       postsPerPage: 10,
-      siteName: 'Blog For User Interactive',
+      siteName: 'PeppaBlog',
       siteDescription: null,
     } satisfies PublicSiteSettings;
   }
@@ -446,7 +482,7 @@ export async function getPublicSiteSettings(locale: Locale) {
 
   return {
     postsPerPage: row.posts_per_page,
-    siteName: translation?.site_name ?? 'Blog For User Interactive',
+    siteName: translation?.site_name ?? 'PeppaBlog',
     siteDescription: translation?.site_description ?? null,
   } satisfies PublicSiteSettings;
 }
@@ -564,6 +600,79 @@ export async function listPublishedPosts(
     .filter((post): post is BlogPostListItem => Boolean(post));
 
   return filterPosts(posts, options);
+}
+
+export async function listPublishedPostsPage(
+  locale: Locale,
+  options: {
+    page: number;
+    pageSize: number;
+  },
+): Promise<PaginatedPublishedPosts> {
+  const supabase = createSupabasePublicClient();
+  const now = new Date().toISOString();
+  const safePage = Math.max(1, Math.floor(options.page));
+  const safePageSize = Math.max(1, Math.floor(options.pageSize));
+  const from = (safePage - 1) * safePageSize;
+  const to = from + safePageSize - 1;
+  const { data, error, count } = await supabase
+    .from('posts')
+    .select(PUBLIC_POST_SELECT, {
+      count: 'exact',
+    })
+    .eq('status', 'published')
+    .not('published_at', 'is', null)
+    .lte('published_at', now)
+    .order('published_at', { ascending: false })
+    .range(from, to);
+
+  throwIfSupabaseError(error, 'Unable to load paginated published posts');
+
+  const items = ((data ?? []) as PostRow[])
+    .map((row) => mapPostListItem(row, locale))
+    .filter((post): post is BlogPostListItem => Boolean(post));
+  const totalCount = count ?? 0;
+  const totalPages = totalCount > 0 ? Math.ceil(totalCount / safePageSize) : 1;
+
+  return {
+    items,
+    page: safePage,
+    pageSize: safePageSize,
+    totalCount,
+    totalPages,
+  };
+}
+
+export async function listSearchablePublishedPosts(locale: Locale) {
+  const supabase = createSupabasePublicClient();
+  const now = new Date().toISOString();
+  const { data, error } = await supabase
+    .from('posts')
+    .select(PUBLIC_POST_SELECT)
+    .eq('status', 'published')
+    .not('published_at', 'is', null)
+    .lte('published_at', now)
+    .order('published_at', { ascending: false });
+
+  throwIfSupabaseError(error, 'Unable to load searchable published posts');
+
+  return ((data ?? []) as PostRow[])
+    .flatMap((row) => {
+      const listItem = mapPostListItem(row, locale);
+      const translation = findPreferredTranslation(row.post_translations, locale);
+
+      if (!listItem || !translation) {
+        return [];
+      }
+
+      return [
+        {
+          ...listItem,
+          searchText: extractContentText(translation.content) ?? '',
+        } satisfies SearchableBlogPost,
+      ];
+    })
+    .filter(Boolean);
 }
 
 async function getPublishedPostRowById(postId: string) {
@@ -766,4 +875,24 @@ export async function resolveTag(
     status: 'found',
     record: tag,
   };
+}
+
+export async function getPublicPostViewCount(postId: string) {
+  const supabase = createSupabaseAdminClient();
+
+  if (!supabase) {
+    return null;
+  }
+
+  const { count, error } = await supabase
+    .from('post_views')
+    .select('id', {
+      count: 'exact',
+      head: true,
+    })
+    .eq('post_id', postId);
+
+  throwIfSupabaseError(error, 'Unable to load post view count');
+
+  return count ?? 0;
 }

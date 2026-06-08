@@ -6,6 +6,7 @@ import { requestPasswordResetAction } from '@/lib/auth/actions';
 import { getInitialAuthFormState } from '@/lib/auth/form-state';
 import type { Locale } from '@/i18n/config';
 import { useTranslations } from '@/providers/locale-provider';
+import { Input } from '@/components/ui';
 
 import { AuthFormMessage } from './auth-form-message';
 import { AuthSubmitButton } from './auth-submit-button';
@@ -32,11 +33,10 @@ export function PasswordResetRequestForm({
         <span className="text-sm font-medium text-[var(--theme-foreground)]">
           {t('auth.emailLabel')}
         </span>
-        <input
+        <Input
           type="email"
           name="email"
           required
-          className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)] transition outline-none focus:border-[var(--theme-accent)]"
         />
       </label>
 

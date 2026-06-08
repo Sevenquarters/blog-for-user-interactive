@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { ContentFlashMessage } from '@/components/content/content-flash-message';
+import { Button, Card, Input, Textarea, cardClassName } from '@/components/ui';
 import { isSupportedLocale } from '@/i18n/config';
 import { getMessages } from '@/i18n/dictionaries';
 import { translateMessage } from '@/i18n/messages';
@@ -98,7 +99,7 @@ export default async function MediaPage({
 
   return (
     <section className="w-full space-y-6">
-      <div className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-8 shadow-[0_30px_80px_rgba(15,23,42,0.08)]">
+      <Card tone="hero" className="p-8">
         <p className="text-sm font-semibold tracking-[0.24em] text-[var(--theme-accent)] uppercase">
           {translateMessage(messages, 'media.eyebrow')}
         </p>
@@ -108,7 +109,7 @@ export default async function MediaPage({
         <p className="mt-3 max-w-3xl text-base leading-7 text-[var(--theme-muted)]">
           {translateMessage(messages, 'media.description')}
         </p>
-      </div>
+      </Card>
 
       {successPath ? (
         <ContentFlashMessage
@@ -123,20 +124,23 @@ export default async function MediaPage({
         />
       ) : null}
 
-      <section className="rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-[0_18px_48px_rgba(15,23,42,0.06)]">
+      <Card className="p-6">
         <h2 className="text-2xl font-semibold text-[var(--theme-foreground)]">
           {translateMessage(messages, 'media.uploadTitle')}
         </h2>
         <form action={uploadAction} className="mt-5 grid gap-4">
-          <label className="space-y-2">
-            <span className="text-sm font-medium text-[var(--theme-foreground)]">
+          <label className={cardClassName({ tone: 'dashed', className: 'space-y-3 rounded-[1.75rem] p-6' })}>
+            <span className="text-sm font-semibold tracking-[0.12em] text-[var(--theme-accent)] uppercase">
               {translateMessage(messages, 'media.fileLabel')}
             </span>
-            <input
+            <span className="block text-sm leading-7 text-[var(--theme-muted)]">
+              {translateMessage(messages, 'media.description')}
+            </span>
+            <Input
               type="file"
               name="file"
               accept="image/*,video/*"
-              className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
+              className="file:mr-4 file:rounded-full file:border-0 file:bg-[var(--theme-accent)] file:px-4 file:py-2 file:font-semibold file:text-white"
             />
           </label>
 
@@ -145,54 +149,47 @@ export default async function MediaPage({
               <span className="text-sm font-medium text-[var(--theme-foreground)]">
                 {translateMessage(messages, 'media.altTextEnLabel')}
               </span>
-              <input
+              <Input
                 type="text"
                 name="altTextEn"
-                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
               />
             </label>
             <label className="space-y-2">
               <span className="text-sm font-medium text-[var(--theme-foreground)]">
                 {translateMessage(messages, 'media.altTextZhCnLabel')}
               </span>
-              <input
+              <Input
                 type="text"
                 name="altTextZhCn"
-                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
               />
             </label>
             <label className="space-y-2">
               <span className="text-sm font-medium text-[var(--theme-foreground)]">
                 {translateMessage(messages, 'media.captionEnLabel')}
               </span>
-              <textarea
+              <Textarea
                 name="captionEn"
                 rows={3}
-                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
               />
             </label>
             <label className="space-y-2">
               <span className="text-sm font-medium text-[var(--theme-foreground)]">
                 {translateMessage(messages, 'media.captionZhCnLabel')}
               </span>
-              <textarea
+              <Textarea
                 name="captionZhCn"
                 rows={3}
-                className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
               />
             </label>
           </div>
 
           <div>
-            <button
-              type="submit"
-              className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--theme-accent)] px-6 py-3 text-sm font-semibold text-white shadow-[0_16px_38px_rgba(194,65,12,0.3)] transition hover:-translate-y-0.5"
-            >
+            <Button type="submit" variant="primary" size="lg">
               {translateMessage(messages, 'media.uploadButton')}
-            </button>
+            </Button>
           </div>
         </form>
-      </section>
+      </Card>
 
       <section className="space-y-5">
         <h2 className="text-2xl font-semibold text-[var(--theme-foreground)]">
@@ -200,7 +197,7 @@ export default async function MediaPage({
         </h2>
 
         {mediaAssets.length === 0 ? (
-          <div className="rounded-[2rem] border border-dashed border-[var(--theme-border)] bg-[var(--theme-surface)] p-8 text-base leading-8 text-[var(--theme-muted)]">
+          <div className={cardClassName({ tone: 'dashed', className: 'p-8 text-base leading-8 text-[var(--theme-muted)]' })}>
             {translateMessage(messages, 'media.emptyState')}
           </div>
         ) : (
@@ -219,9 +216,10 @@ export default async function MediaPage({
               const deleteAsset = deleteMediaAction.bind(null, locale, mediaAsset.id);
 
               return (
-                <article
+                <Card
                   key={mediaAsset.id}
-                  className="grid gap-6 rounded-[2rem] border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-[0_18px_48px_rgba(15,23,42,0.06)] lg:grid-cols-[20rem_1fr]"
+                  as="article"
+                  className="grid gap-6 p-6 lg:grid-cols-[20rem_1fr]"
                 >
                   <div className="space-y-4">
                     {renderMediaPreview(
@@ -248,54 +246,47 @@ export default async function MediaPage({
                           <span className="text-sm font-medium text-[var(--theme-foreground)]">
                             {translateMessage(messages, 'media.altTextEnLabel')}
                           </span>
-                          <input
+                          <Input
                             type="text"
                             name="altTextEn"
                             defaultValue={mediaAsset.translations.en.altText}
-                            className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                           />
                         </label>
                         <label className="space-y-2">
                           <span className="text-sm font-medium text-[var(--theme-foreground)]">
                             {translateMessage(messages, 'media.altTextZhCnLabel')}
                           </span>
-                          <input
+                          <Input
                             type="text"
                             name="altTextZhCn"
                             defaultValue={mediaAsset.translations['zh-CN'].altText}
-                            className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                           />
                         </label>
                         <label className="space-y-2">
                           <span className="text-sm font-medium text-[var(--theme-foreground)]">
                             {translateMessage(messages, 'media.captionEnLabel')}
                           </span>
-                          <textarea
+                          <Textarea
                             name="captionEn"
                             rows={3}
                             defaultValue={mediaAsset.translations.en.caption}
-                            className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                           />
                         </label>
                         <label className="space-y-2">
                           <span className="text-sm font-medium text-[var(--theme-foreground)]">
                             {translateMessage(messages, 'media.captionZhCnLabel')}
                           </span>
-                          <textarea
+                          <Textarea
                             name="captionZhCn"
                             rows={3}
                             defaultValue={mediaAsset.translations['zh-CN'].caption}
-                            className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
                           />
                         </label>
                       </div>
                       <div>
-                        <button
-                          type="submit"
-                          className="rounded-full border border-[var(--theme-border)] px-5 py-3 text-sm font-semibold text-[var(--theme-foreground)]"
-                        >
+                        <Button type="submit" variant="secondary" size="md">
                           {translateMessage(messages, 'media.saveCopyButton')}
-                        </button>
+                        </Button>
                       </div>
                     </form>
 
@@ -304,31 +295,25 @@ export default async function MediaPage({
                         <span className="text-sm font-medium text-[var(--theme-foreground)]">
                           {translateMessage(messages, 'media.replaceFileLabel')}
                         </span>
-                        <input
+                        <Input
                           type="file"
                           name="file"
                           accept="image/*,video/*"
-                          className="w-full rounded-2xl border border-[var(--theme-border)] bg-white px-4 py-3 text-sm text-[var(--theme-foreground)]"
+                          className="file:mr-4 file:rounded-full file:border-0 file:bg-[var(--theme-accent)] file:px-4 file:py-2 file:font-semibold file:text-white"
                         />
                       </label>
-                      <button
-                        type="submit"
-                        className="rounded-full border border-[var(--theme-border)] px-5 py-3 text-sm font-semibold text-[var(--theme-foreground)]"
-                      >
+                      <Button type="submit" variant="secondary" size="md">
                         {translateMessage(messages, 'media.replaceButton')}
-                      </button>
+                      </Button>
                     </form>
 
                     <form action={deleteAsset}>
-                      <button
-                        type="submit"
-                        className="rounded-full border border-red-200 bg-red-50 px-5 py-3 text-sm font-semibold text-red-700"
-                      >
+                      <Button type="submit" variant="danger" size="md">
                         {translateMessage(messages, 'media.deleteButton')}
-                      </button>
+                      </Button>
                     </form>
                   </div>
-                </article>
+                </Card>
               );
             })}
           </div>

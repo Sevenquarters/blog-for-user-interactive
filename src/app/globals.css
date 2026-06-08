@@ -3,19 +3,41 @@
 :root {
   --theme-background: #fffdf8;
   --theme-surface: rgba(255, 255, 255, 0.88);
+  --theme-surface-strong: rgba(255, 255, 255, 0.94);
   --theme-foreground: #1f2937;
   --theme-muted: #5b6472;
   --theme-accent: #c2410c;
   --theme-border: rgba(148, 163, 184, 0.28);
+  --theme-border-strong: rgba(100, 116, 139, 0.38);
+  --theme-accent-soft: rgba(194, 65, 12, 0.28);
+  --theme-focus: rgba(194, 65, 12, 0.18);
+  --theme-hero:
+    linear-gradient(
+      125deg,
+      rgba(255, 247, 237, 0.98),
+      rgba(255, 255, 255, 0.96) 48%,
+      rgba(254, 240, 138, 0.34) 100%
+    );
 }
 
 html[data-theme-mode='dark'] {
-  --theme-background: #111827;
-  --theme-surface: rgba(17, 24, 39, 0.92);
+  --theme-background: #0f172a;
+  --theme-surface: rgba(15, 23, 42, 0.82);
+  --theme-surface-strong: rgba(15, 23, 42, 0.92);
   --theme-foreground: #f8fafc;
   --theme-muted: #cbd5e1;
   --theme-accent: #f59e0b;
-  --theme-border: rgba(148, 163, 184, 0.26);
+  --theme-border: rgba(148, 163, 184, 0.22);
+  --theme-border-strong: rgba(148, 163, 184, 0.34);
+  --theme-accent-soft: rgba(245, 158, 11, 0.24);
+  --theme-focus: rgba(245, 158, 11, 0.18);
+  --theme-hero:
+    linear-gradient(
+      145deg,
+      rgba(15, 23, 42, 0.98),
+      rgba(15, 23, 42, 0.94) 44%,
+      rgba(120, 53, 15, 0.58) 100%
+    );
 }
 
 * {
@@ -24,6 +46,12 @@ html[data-theme-mode='dark'] {
 
 html {
   background: var(--theme-background);
+  color-scheme: light;
+  scroll-behavior: smooth;
+}
+
+html[data-theme-mode='dark'] {
+  color-scheme: dark;
 }
 
 body {
@@ -32,6 +60,7 @@ body {
   color: var(--theme-foreground);
   font-family:
     'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  line-height: 1.5;
 }
 
 a {
@@ -43,57 +72,88 @@ button {
   font: inherit;
 }
 
+input,
+textarea,
+select,
+button {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(194, 65, 12, 0.18);
+}
+
+:focus-visible {
+  outline: none;
+}
+
 .tiptap-editor .ProseMirror {
-  min-height: 22rem;
+  min-height: 26rem;
+  max-width: 46rem;
+  margin: 0 auto;
+  font-family:
+    Georgia, 'Times New Roman', 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+  line-height: 1.9;
 }
 
 .tiptap-editor .ProseMirror p {
   margin: 0;
+  font-size: 1.07rem;
 }
 
 .tiptap-editor .ProseMirror > * + * {
-  margin-top: 1rem;
+  margin-top: 1.35rem;
 }
 
 .tiptap-editor .ProseMirror h1,
 .tiptap-editor .ProseMirror h2,
 .tiptap-editor .ProseMirror h3 {
-  line-height: 1.2;
+  line-height: 1.18;
   font-weight: 700;
+  letter-spacing: -0.03em;
 }
 
 .tiptap-editor .ProseMirror h1 {
-  font-size: 2rem;
+  margin-top: 2.5rem;
+  font-size: clamp(2.3rem, 3vw, 3.3rem);
 }
 
 .tiptap-editor .ProseMirror h2 {
-  font-size: 1.6rem;
+  margin-top: 2.25rem;
+  font-size: clamp(1.8rem, 2.4vw, 2.45rem);
 }
 
 .tiptap-editor .ProseMirror h3 {
-  font-size: 1.3rem;
+  margin-top: 2rem;
+  font-size: clamp(1.4rem, 2vw, 1.8rem);
 }
 
 .tiptap-editor .ProseMirror ul,
 .tiptap-editor .ProseMirror ol {
   margin: 0;
-  padding-left: 1.5rem;
+  padding-left: 1.7rem;
 }
 
 .tiptap-editor .ProseMirror blockquote {
   margin: 0;
   border-left: 4px solid var(--theme-accent);
-  padding-left: 1rem;
-  color: var(--theme-muted);
+  border-radius: 0 1.35rem 1.35rem 0;
+  background: rgba(255, 255, 255, 0.62);
+  padding: 1.1rem 1.25rem 1.1rem 1.3rem;
+  color: color-mix(in srgb, var(--theme-foreground) 72%, var(--theme-muted));
+  font-size: 1.08rem;
 }
 
 .tiptap-editor .ProseMirror pre {
   margin: 0;
   overflow-x: auto;
-  border-radius: 1rem;
-  background: #111827;
-  padding: 1rem 1.125rem;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 1.35rem;
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.92));
+  padding: 1.2rem 1.35rem;
   color: #f8fafc;
+  box-shadow: 0 20px 52px rgba(15, 23, 42, 0.2);
 }
 
 .tiptap-editor .ProseMirror pre code {
@@ -104,36 +164,43 @@ button {
 }
 
 .tiptap-editor .ProseMirror code {
-  border-radius: 0.4rem;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 0.65rem;
   background: rgba(15, 23, 42, 0.08);
-  padding: 0.15rem 0.4rem;
+  padding: 0.16rem 0.45rem;
   font-size: 0.95em;
 }
 
 .tiptap-editor .ProseMirror hr {
   border: 0;
   border-top: 1px solid var(--theme-border);
+  margin: 2rem 0;
 }
 
 .tiptap-editor .ProseMirror a {
   color: var(--theme-accent);
   text-decoration: underline;
-  text-underline-offset: 0.2em;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.22em;
 }
 
 .tiptap-editor .ProseMirror img {
   display: block;
   max-width: 100%;
   height: auto;
-  border-radius: 1rem;
+  margin: 1.8rem auto;
+  border-radius: 1.4rem;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.14);
 }
 
 .tiptap-editor .ProseMirror video {
   display: block;
   width: 100%;
   max-width: 100%;
-  border-radius: 1rem;
+  margin: 1.8rem auto;
+  border-radius: 1.4rem;
   background: #0f172a;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
 }
 
 .tiptap-editor .ProseMirror .ProseMirror-selectednode {

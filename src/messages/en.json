@@ -1,11 +1,11 @@
 {
   "meta": {
-    "title": "Blog For User Interactive",
-    "description": "A bilingual editorial blog built with Next.js and Supabase."
+    "title": "PeppaBlog",
+    "description": "A personal publishing platform for thoughtful essays, product notes, and engineering writing."
   },
   "common": {
-    "phase": "Public Journal",
-    "projectName": "Bilingual Editorial"
+    "phase": "Personal Publishing",
+    "projectName": "PeppaBlog"
   },
   "locales": {
     "en": "English",
@@ -68,7 +68,7 @@
   },
   "home": {
     "eyebrow": "Published stories",
-    "description": "A bilingual editorial space for product ideas, engineering notes, and design decisions.",
+    "description": "A calm place for product ideas, engineering notes, and long-form writing worth revisiting.",
     "primaryCta": "Browse the blog",
     "secondaryCta": "Open dashboard",
     "statPublishedPosts": "Published posts",
@@ -80,8 +80,8 @@
   },
   "blog": {
     "eyebrow": "Editorial archive",
-    "indexTitle": "Bilingual blog archive",
-    "indexDescription": "Explore published articles across English and Simplified Chinese, with category and tag navigation built into the reading experience.",
+    "indexTitle": "PeppaBlog archive",
+    "indexDescription": "Browse published stories, explore ideas by category or tag, and move through the archive with a cleaner reading flow.",
     "featuredTitle": "Featured stories",
     "latestTitle": "Recent publishing",
     "categoriesTitle": "Categories",
@@ -92,8 +92,11 @@
     "featuredBadge": "Featured",
     "readArticle": "Read article",
     "readingTime": "{minutes} min read",
-    "emptyState": "No published posts are available yet. Create published content in Supabase to populate the public blog.",
+    "emptyState": "No published posts are available yet. Publish the first story to bring PeppaBlog to life.",
     "backToBlog": "Back to blog",
+    "paginationPrevious": "Previous",
+    "paginationNext": "Next",
+    "paginationPage": "Page {page} of {total}",
     "browseFiltersTitle": "Browse archive",
     "activeFiltersLabel": "Switch categories or tags without leaving this view.",
     "clearCategoryFilter": "clear category",
@@ -213,7 +216,7 @@
   "dashboard": {
     "eyebrow": "Authenticated route",
     "title": "Account dashboard",
-    "description": "This protected page proves the Supabase session flow, profile loading, route guards, and reusable database repositories.",
+    "description": "Monitor your account, review publishing setup, and move between the core parts of the PeppaBlog workspace.",
     "roleLabel": "Role",
     "emailLabel": "Email",
     "localeLabel": "Preferred locale",
@@ -225,7 +228,7 @@
   "profile": {
     "eyebrow": "Profile loading",
     "title": "Profile details",
-    "description": "This page loads the authenticated user profile from Supabase through the shared server-side data layer.",
+    "description": "Manage the account identity used across the PeppaBlog publishing workspace.",
     "displayNameLabel": "Display name",
     "emailLabel": "Email",
     "roleLabel": "Role",
@@ -234,7 +237,7 @@
   "admin": {
     "eyebrow": "Admin-only route",
     "title": "Presentation management",
-    "description": "Manage the public-facing site identity, default locale, active theme, and token-based presentation settings from one admin workspace.",
+    "description": "Manage PeppaBlog branding, default locale, theme presets, and the presentation system from one admin workspace.",
     "currentRoleLabel": "Current role",
     "siteNameLabel": "Site name",
     "defaultLocaleLabel": "Default locale",
@@ -279,7 +282,7 @@
   "media": {
     "eyebrow": "Media workspace",
     "title": "Media library",
-    "description": "Upload, describe, replace, and remove shared image or video assets for editorial workflows.",
+    "description": "Upload, describe, replace, and remove shared image or video assets for the PeppaBlog publishing workflow.",
     "uploadTitle": "Upload new media",
     "libraryTitle": "Stored media",
     "fileLabel": "Media file",
@@ -311,7 +314,7 @@
   "comments": {
     "eyebrow": "Moderation queue",
     "title": "Comment moderation",
-    "description": "Review pending discussion, approve legitimate comments, and remove spam before public comment experiences go live.",
+    "description": "Review pending discussion, approve thoughtful replies, and keep PeppaBlog conversations healthy before they go live.",
     "filters": {
       "all": "All"
     },

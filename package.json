@@ -19,6 +19,7 @@
     "@tiptap/extension-underline": "^3.26.0",
     "@tiptap/react": "^3.26.0",
     "@tiptap/starter-kit": "^3.26.0",
+    "fuse.js": "^7.4.2",
     "next": "^16.2.7",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
